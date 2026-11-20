@@ -18,8 +18,6 @@ A privacy-first, open-source speech-to-text application that runs entirely on yo
 
 Learn more on the [official website](https://murmure.al1x-ai.com/) | [Documentation](https://docs.murmure.app)
 
-![demo](public/murmure-demo.webp)
-
 ## Features
 
 - **Privacy First**: All processing happens locally on your device. No data ever leaves your computer.
