@@ -8,10 +8,8 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// carries a value.
 const ACTION_FLAGS: &[(&str, CliCommand)] = &[
     ("transcription", CliCommand::Transcription),
-    ("transcription-command", CliCommand::TranscriptionCommand),
     ("paste-last", CliCommand::PasteLast),
     ("cancel", CliCommand::Cancel),
-    ("voice-mode", CliCommand::VoiceMode),
     ("quit", CliCommand::Quit),
 ];
 
@@ -401,10 +399,8 @@ mod tests {
     fn test_parse_raw_args_action_flags() {
         let cases: &[(&str, CliCommand)] = &[
             ("--transcription", CliCommand::Transcription),
-            ("--transcription-command", CliCommand::TranscriptionCommand),
             ("--paste-last", CliCommand::PasteLast),
             ("--cancel", CliCommand::Cancel),
-            ("--voice-mode", CliCommand::VoiceMode),
             ("--quit", CliCommand::Quit),
         ];
 

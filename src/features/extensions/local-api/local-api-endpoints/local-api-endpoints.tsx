@@ -1,5 +1,4 @@
-import { CodeXml, FileCode2 } from 'lucide-react';
-import { ExternalLink } from '@/components/external-link';
+import { CodeXml } from 'lucide-react';
 import { SettingsUI } from '@/components/settings-ui';
 import { useLlmExtensionsEnabled } from '@/features/extensions/llm-connect/hooks/use-llm-extensions-enabled';
 import { useTranslation } from '@/i18n';
@@ -31,13 +30,6 @@ export const LocalApiEndpoints = ({ port, isServerRunning }: LocalApiEndpointsPr
                         availability={availability}
                     />
                 ))}
-                <div className="flex items-center gap-1 text-xs">
-                    <FileCode2 className="w-4 h-4 text-muted-foreground" />
-                    {t('View')}{' '}
-                    <ExternalLink href="https://github.com/Kieirra/murmure/blob/main/docs/features/api.md">
-                        {t('API documentation')}
-                    </ExternalLink>
-                </div>
             </div>
         </SettingsUI.Section>
     );

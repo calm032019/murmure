@@ -39,12 +39,6 @@ Close windows, mute other audio sources, and move away from fans or air conditio
 
 Make sure you're holding the shortcut for the entire duration you want to record. Releasing the key stops the recording.
 
-### In Voice-Activated Mode
-
-Voice mode stops recording when the volume drops below the silence threshold. If your microphone volume is too low, it triggers early cutoff.
-
-**Fix**: Increase your microphone volume in your OS sound settings, or adjust the silence timeout in Voice Mode settings (default: 1.5 seconds).
-
 ### Maximum Duration
 
 Recordings are limited to **5 minutes**. After 5 minutes, the recording automatically stops and transcription begins.

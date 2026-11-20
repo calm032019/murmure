@@ -113,7 +113,7 @@ export const ModeTabs = ({ modes, activeModeIndex, models, updateSettings }: Mod
                 prompt,
                 model: activeMode?.model || (models.length > 0 ? models[0].name : ''),
                 provider: modes[activeModeIndex]?.provider ?? 'local',
-                wake_word: `alix ${name.toLowerCase()}`,
+                wake_word: '',
             };
 
             const newModes = [...modes, newMode];

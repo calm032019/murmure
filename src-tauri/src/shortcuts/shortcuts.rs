@@ -66,35 +66,6 @@ pub(crate) fn ensure_llm_mode_ready(app: &AppHandle, index: usize, notify: bool)
     Ok(())
 }
 
-pub(crate) fn ensure_command_ready(app: &AppHandle, notify: bool) -> Result<(), ()> {
-    let settings = crate::llm::helpers::load_llm_connect_settings(app);
-    match (
-        settings.onboarding_completed,
-        settings.command.enabled,
-        settings.command.model.trim().is_empty(),
-    ) {
-        (false, _, _) => {
-            warn!("Command mode not configured, recording ignored");
-            Err(())
-        }
-        (true, false, _) => {
-            warn!("Command mode turned off, recording ignored");
-            if notify {
-                notify_overlay_error(app, "command-disabled");
-            }
-            Err(())
-        }
-        (true, true, true) => {
-            warn!("Command mode has no model, recording ignored");
-            if notify {
-                notify_overlay_error(app, "command-not-configured");
-            }
-            Err(())
-        }
-        (true, true, false) => Ok(()),
-    }
-}
-
 pub(crate) fn is_recording_idle() -> bool {
     *recording_state().source.lock() == RecordingSource::None
 }
@@ -117,22 +88,6 @@ pub fn handle_shortcut_event(
                 event_type,
                 &shortcut_state,
                 move || crate::audio::record_audio(&app_for_fn, RecordingMode::Standard),
-            );
-        }
-        ShortcutAction::StartRecordingCommand => {
-            if is_recording_idle()
-                && ensure_command_ready(app, event_type == KeyEventType::Pressed).is_err()
-            {
-                return;
-            }
-            let app_for_fn = app.clone();
-            handle_recording_event(
-                app,
-                RecordingSource::Command,
-                mode,
-                event_type,
-                &shortcut_state,
-                move || crate::audio::record_audio(&app_for_fn, RecordingMode::Command),
             );
         }
         ShortcutAction::PasteLastTranscript => {
@@ -164,17 +119,6 @@ pub fn handle_shortcut_event(
         ShortcutAction::CancelRecording => {
             if event_type == KeyEventType::Pressed && !is_recording_idle() {
                 force_cancel_recording(app);
-            }
-        }
-        ShortcutAction::ToggleVoiceMode => {
-            if event_type == KeyEventType::Pressed {
-                let mut last_switch = recording_state().last_mode_switch.lock();
-                if last_switch.elapsed() <= Duration::from_millis(50) {
-                    return;
-                }
-                *last_switch = Instant::now();
-                drop(last_switch);
-                let _ = app.emit("voice-mode-toggle-requested", ());
             }
         }
     }

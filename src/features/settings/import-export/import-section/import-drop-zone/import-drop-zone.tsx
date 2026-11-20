@@ -48,13 +48,6 @@ export const ImportDropZone = ({ state, errorMessage, onBrowse, onFileDrop, onTr
                 <p className="text-sm text-muted-foreground">{errorMessage}</p>
                 <div className="flex gap-2">
                     <Page.SecondaryButton onClick={onTryAnother}>{t('Try another file')}</Page.SecondaryButton>
-                    <a
-                        href="https://github.com/Kieirra/murmure/releases/latest"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Page.PrimaryButton>{t('Update Murmure')}</Page.PrimaryButton>
-                    </a>
                 </div>
             </div>
         );

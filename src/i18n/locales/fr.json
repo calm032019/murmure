@@ -713,5 +713,12 @@
     "Use built-in AI": "Utiliser l'IA intégrée",
     "Uses the built-in AI or your own server. Guided setup in the next step.": "Utilise l'IA intégrée ou votre propre serveur. Configuration guidée à l'étape suivante.",
     "Uses your graphics card, or the CPU": "Utilise votre carte graphique, ou le processeur",
-    "~ 3 GB on disk": "~ 3 Go sur le disque"
+    "~ 3 GB on disk": "~ 3 Go sur le disque",
+    "AI model settings": "Réglages du modèle d'IA",
+    "Clean": "Nettoyage",
+    "Prompt Mode only": "Mode Prompt uniquement",
+    "Example: \"...looks fine. Also, can you send the quote?\" → \"...looks fine.⏎⏎Also, can you send the quote?\"": "Exemple : « …ça me va. Au fait, tu peux envoyer le devis ? » → « …ça me va.⏎⏎Au fait, tu peux envoyer le devis ? »",
+    "Removes sounds like \"um\", \"uh\" and \"erm\" and tidies the punctuation around them.": "Supprime les sons comme « euh », « hum » et « bah », et remet en ordre la ponctuation autour.",
+    "Starts a new paragraph when you change subject (\"Also\", \"By the way\", \"Moving on\"...) or pause for about two seconds after a sentence. You can still say \"new line\" or \"new paragraph\".": "Commence un nouveau paragraphe quand vous changez de sujet (« Aussi », « Au fait », « Ensuite »…) ou faites une pause d'environ deux secondes après une phrase. Vous pouvez toujours dire « à la ligne » ou « nouveau paragraphe ».",
+    "When you correct yourself with \"actually\", \"I mean\", \"no\" or \"scratch that\", only the corrected version is kept.": "Quand vous vous reprenez avec « en fait », « je veux dire », « non » ou « oublie ça », seule la version corrigée est gardée."
 }

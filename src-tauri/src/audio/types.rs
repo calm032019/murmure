@@ -48,7 +48,6 @@ pub struct AudioState {
 pub enum RecordingMode {
     Standard = 0,
     Llm = 1,
-    Command = 2,
 }
 
 impl RecordingMode {
@@ -56,7 +55,6 @@ impl RecordingMode {
         match self {
             RecordingMode::Standard => "standard",
             RecordingMode::Llm => "llm",
-            RecordingMode::Command => "command",
         }
     }
 }
@@ -66,7 +64,6 @@ impl From<u8> for RecordingMode {
         match val {
             0 => RecordingMode::Standard,
             1 => RecordingMode::Llm,
-            2 => RecordingMode::Command,
             _ => RecordingMode::Standard,
         }
     }
@@ -150,10 +147,6 @@ impl AudioState {
         *self.cached_device.lock() = device;
     }
 
-    /// Gets a clone of the cached audio device
-    pub fn get_cached_device(&self) -> Option<Device> {
-        self.cached_device.lock().clone()
-    }
 }
 
 pub(super) enum RecorderStartError {

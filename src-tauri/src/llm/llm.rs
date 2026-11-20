@@ -275,43 +275,6 @@ pub async fn process_api_request(
     }
 }
 
-pub async fn process_with_active_mode(
-    app: &AppHandle,
-    system_prompt: String,
-    user_prompt: String,
-) -> Result<String, String> {
-    let settings = load_llm_connect_settings(app);
-    let (provider, model) = active_mode_target(&settings)?;
-    dispatch_to_llm(
-        app,
-        &settings,
-        &provider,
-        &model,
-        Some(&system_prompt),
-        &user_prompt,
-        true,
-    )
-    .await
-}
-
-pub async fn process_voice_command(
-    app: &AppHandle,
-    system_prompt: String,
-    user_prompt: String,
-) -> Result<String, String> {
-    let settings = load_llm_connect_settings(app);
-    dispatch_to_llm(
-        app,
-        &settings,
-        &settings.command.provider,
-        &settings.command.model,
-        Some(&system_prompt),
-        &user_prompt,
-        true,
-    )
-    .await
-}
-
 /// The built-in engine ships with Murmure, so "connecting" means its files are present.
 pub async fn test_local_engine(app: &AppHandle) -> Result<bool, String> {
     if crate::llm::engine::is_engine_available(app) {
@@ -385,8 +348,6 @@ pub async fn fetch_remote_models(
 pub async fn warmup_ollama_model(app: &AppHandle, mode: RecordingMode) -> Result<(), String> {
     let settings = load_llm_connect_settings(app);
     let provider = match mode {
-        RecordingMode::Command if settings.command.enabled => settings.command.provider.clone(),
-        RecordingMode::Command => return Ok(()),
         RecordingMode::Standard | RecordingMode::Llm => match active_mode_target(&settings) {
             Ok((provider, _)) => provider,
             Err(_) => return Ok(()),
@@ -405,10 +366,6 @@ pub fn warmup_ollama_model_background(app: &AppHandle, mode: RecordingMode) {
             warn!("LLM warmup failed: {}", e);
         }
     });
-}
-
-pub fn switch_active_mode(app: &AppHandle, index: usize) {
-    switch_active_mode_internal(app, index, true);
 }
 
 /// Same as `switch_active_mode` but skips the overlay flash, for the

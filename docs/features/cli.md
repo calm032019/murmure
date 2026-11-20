@@ -9,10 +9,8 @@ These commands communicate with the running Murmure instance. If Murmure is not 
 | Command | Description |
 | ------- | ----------- |
 | `murmure --transcription` | Toggle standard transcription ON/OFF |
-| `murmure --transcription-command` | Toggle transcription in Command mode |
 | `murmure --paste-last` | Paste the last transcription, even when Automatic insert is off |
 | `murmure --cancel` | Cancel the current recording and return to idle |
-| `murmure --voice-mode` | Toggle Voice Mode ON/OFF |
 | `murmure --quit` | Quit Murmure completely |
 | `murmure --llm-mode 1` | Start transcription with LLM prompt 1 |
 | `murmure --llm-mode 2` | Start transcription with LLM prompt 2 |

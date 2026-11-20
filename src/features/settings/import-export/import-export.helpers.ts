@@ -9,8 +9,6 @@ import {
     ExportedFormattingSettings,
     ExportedSystemSettings,
     ShortcutSettings,
-    VoiceModeSettings,
-    SmartMicSettings,
     ExportedLlmConnect,
     AppSettings,
 } from './import-export.types';
@@ -90,37 +88,10 @@ export const extractSystemSettings = (all: AppSettings): ExportedSystemSettings 
     };
 };
 
-export const extractVoiceMode = (all: AppSettings): VoiceModeSettings => {
-    return {
-        wake_word_enabled: all.wake_word_enabled,
-        wake_word_record: all.wake_word_record,
-        wake_word_command: all.wake_word_command,
-        wake_word_cancel: all.wake_word_cancel,
-        wake_word_validate: all.wake_word_validate,
-        wake_word_submit: all.wake_word_submit,
-        auto_enter_after_wake_word: all.auto_enter_after_wake_word,
-        silence_timeout_ms: all.silence_timeout_ms,
-    };
-};
-
-export const extractSmartMic = (all: AppSettings): SmartMicSettings => {
-    return {
-        smartmic_enabled: all.smartmic_enabled,
-        smartmic_port: all.smartmic_port,
-        smartmic_relay_enabled: all.smartmic_relay_enabled,
-        smartmic_relay_url: all.smartmic_relay_url,
-        smartmic_machine_id_enabled: all.smartmic_machine_id_enabled,
-        smartmic_machine_id: all.smartmic_machine_id,
-        smartmic_token_ttl_hours: all.smartmic_token_ttl_hours,
-        smartmic_bind_address: all.smartmic_bind_address,
-    };
-};
-
 export const extractShortcuts = (all: AppSettings): ShortcutSettings => {
     return {
         record_shortcut: all.record_shortcut,
         last_transcript_shortcut: all.last_transcript_shortcut,
-        command_shortcut: all.command_shortcut,
         llm_mode_1_shortcut: all.llm_mode_1_shortcut,
         llm_mode_2_shortcut: all.llm_mode_2_shortcut,
         llm_mode_3_shortcut: all.llm_mode_3_shortcut,
@@ -129,7 +100,6 @@ export const extractShortcuts = (all: AppSettings): ShortcutSettings => {
         llm_transform_2_shortcut: all.llm_transform_2_shortcut,
         llm_transform_3_shortcut: all.llm_transform_3_shortcut,
         llm_transform_4_shortcut: all.llm_transform_4_shortcut,
-        voice_mode_toggle_shortcut: all.voice_mode_toggle_shortcut,
         cancel_shortcut: all.cancel_shortcut,
     };
 };

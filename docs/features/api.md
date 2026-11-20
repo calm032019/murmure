@@ -117,7 +117,7 @@ curl http://127.0.0.1:4800/api/prompt-mode/prompts
 
 ```json
 {
-    "prompts": ["General", "Email"]
+    "prompts": ["Clean", "Email"]
 }
 ```
 
@@ -172,7 +172,7 @@ Two errors carry an extra field:
 {
     "error": "Prompt \"Mail\" not found.",
     "code": "prompt_not_found",
-    "available": ["General", "Email"]
+    "available": ["Clean", "Email"]
 }
 ```
 

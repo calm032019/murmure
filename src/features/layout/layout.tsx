@@ -10,7 +10,6 @@ import { LlmModeNotConfiguredListener } from './listeners/llm-mode-not-configure
 import { ToastEventListener } from './listeners/toast-event-listener';
 import { ConfigImportedListener } from './listeners/config-imported-listener';
 import { WaylandListener } from './listeners/wayland-listener';
-import { VoiceModeToggleListener } from './listeners/voice-mode-toggle-listener';
 import { TrayMenuI18nListener } from './listeners/tray-menu-i18n-listener';
 import { AmbientBackdrop } from './ambient-backdrop/ambient-backdrop';
 import { useGlassStyle } from '@/components/hooks/use-glass-style';
@@ -27,7 +26,6 @@ export const Layout = () => {
             <ToastEventListener />
             <ConfigImportedListener />
             <WaylandListener />
-            <VoiceModeToggleListener />
             <TrayMenuI18nListener />
             <AppSidebar />
             <SidebarInset

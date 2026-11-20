@@ -1,6 +1,6 @@
 use crate::audio::smart_dictation::{polish, PolishOptions};
 use crate::audio::types::AudioState;
-use crate::wake_word::wake_word::normalize_text;
+use crate::utils::text::normalize_text;
 use log::{debug, error};
 use strsim::levenshtein;
 use tauri::AppHandle;

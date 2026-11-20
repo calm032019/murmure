@@ -5,14 +5,12 @@ import type { LLMConnectSettings, LLMMode } from './use-llm-connect';
 export interface LlmExtensionsEnabled {
     isLoaded: boolean;
     llmConnectEnabled: boolean;
-    commandModeEnabled: boolean;
     modes: LLMMode[];
 }
 
 const DISABLED: LlmExtensionsEnabled = {
     isLoaded: false,
     llmConnectEnabled: false,
-    commandModeEnabled: false,
     modes: [],
 };
 
@@ -34,6 +32,5 @@ export const useLlmExtensionsEnabled = () => {
 const toExtensionsEnabled = (settings: LLMConnectSettings) => ({
     isLoaded: true,
     llmConnectEnabled: settings.onboarding_completed && settings.enabled,
-    commandModeEnabled: settings.onboarding_completed && settings.command.enabled,
     modes: settings.modes,
 });

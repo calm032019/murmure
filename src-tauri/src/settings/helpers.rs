@@ -3,7 +3,8 @@ pub fn normalize_result_panel_mode(mode: &str) -> &'static str {
         "off" => "off",
         "command_llm" => "command_llm",
         "all" => "all",
-        _ => "command",
+        // "command" belonged to the removed Command Mode; it showed nothing else.
+        _ => "off",
     }
 }
 
@@ -28,15 +29,15 @@ mod tests {
 
     #[test]
     fn valid_result_panel_modes_are_kept() {
-        for mode in ["off", "command", "command_llm", "all"] {
+        for mode in ["off", "command_llm", "all"] {
             assert_eq!(normalize_result_panel_mode(mode), mode);
         }
     }
 
     #[test]
-    fn unknown_result_panel_modes_fall_back_to_command() {
-        for mode in ["commands", "", "Commands"] {
-            assert_eq!(normalize_result_panel_mode(mode), "command");
+    fn unknown_result_panel_modes_fall_back_to_off() {
+        for mode in ["command", "commands", "", "Commands"] {
+            assert_eq!(normalize_result_panel_mode(mode), "off");
         }
     }
 }

@@ -16,10 +16,8 @@ mod onboarding;
 mod overlay;
 mod settings;
 mod shortcuts;
-mod smartmic;
 mod stats;
 mod utils;
-mod wake_word;
 
 #[cfg(target_os = "linux")]
 pub use utils::platform::is_wayland_session;
@@ -34,13 +32,11 @@ use llm::is_transform_processing;
 use log::{error, info, warn};
 use model::Model;
 use overlay::tray::setup_tray;
-use smartmic::SmartMicState;
 use std::str::FromStr;
 use std::sync::Arc;
 use tauri::{DeviceEventFilter, Manager};
 use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
-use wake_word::types::WakeWordState;
 
 fn show_main_window(app: &tauri::AppHandle) {
     if let Some(main_window) = app.get_webview_window("main") {
@@ -104,13 +100,11 @@ pub fn run() {
                 .level_for("enigo", log::LevelFilter::Info)
                 .level_for("reqwest", log::LevelFilter::Info)
                 .level_for("hyper_util", log::LevelFilter::Info)
-                .level_for("tauri_plugin_updater", log::LevelFilter::Info)
                 .level_for("arboard", log::LevelFilter::Info)
                 .build(),
         )
         .plugin(tauri_plugin_store::Builder::new().build())
-        .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_updater::Builder::new().build());
+        .plugin(tauri_plugin_dialog::init());
 
     if !is_transcribe {
         builder = builder.plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
@@ -155,7 +149,6 @@ pub fn run() {
         )
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())
-        .plugin(tauri_plugin_process::init())
         .device_event_filter(DeviceEventFilter::Never)
         .setup(|app| {
             let start_hidden =
@@ -216,7 +209,6 @@ pub fn run() {
                 Arc::new(Model::new(app.handle().clone()).expect("Failed to initialize model"));
             app.manage(model);
             app.manage(AudioState::new());
-            app.manage(WakeWordState::new());
             app.manage(crate::overlay::overlay::PendingFlashState::default());
 
             let mut s = settings::load_settings(app.handle());
@@ -308,7 +300,6 @@ pub fn run() {
             }
 
             app.manage(HttpApiState::new());
-            app.manage(SmartMicState::new());
             app.manage(utils::enigo_session::EnigoState::default());
 
             let startup_handle = app.handle().clone();
@@ -367,29 +358,6 @@ pub fn run() {
                 }
             }
 
-            if s.smartmic_enabled {
-                if crate::utils::platform::is_wayland_session() {
-                    info!("Smart Mic disabled on Wayland, skipping server startup.");
-                } else {
-                    let app_handle = app.handle().clone();
-                    let state = app_handle.state::<SmartMicState>().inner().clone();
-                    crate::smartmic::spawn_smartmic_thread(
-                        app_handle,
-                        s.smartmic_port,
-                        state,
-                        Some(std::time::Duration::from_secs(2)),
-                    );
-                }
-            }
-
-            if s.wake_word_enabled {
-                let app_handle = app.handle().clone();
-                std::thread::spawn(move || {
-                    std::thread::sleep(std::time::Duration::from_secs(2));
-                    wake_word::start_listener(&app_handle);
-                });
-            }
-
             if !is_transcribe {
                 crate::utils::log_watchdog::spawn(app.handle());
             }
@@ -446,8 +414,6 @@ pub fn run() {
             import_dictionary,
             get_last_transcript_shortcut,
             set_last_transcript_shortcut,
-            get_command_shortcut,
-            set_command_shortcut,
             get_cancel_shortcut,
             set_cancel_shortcut,
             cancel_recording,
@@ -461,8 +427,6 @@ pub fn run() {
             set_llm_mode_4_shortcut,
             get_llm_transform_shortcut,
             set_llm_transform_shortcut,
-            get_voice_mode_toggle_shortcut,
-            set_voice_mode_toggle_shortcut,
             set_overlay_mode,
             set_overlay_position,
             set_tray_menu_labels,
@@ -520,48 +484,6 @@ pub fn run() {
             get_recordings_dir,
             open_accessibility_settings,
             check_accessibility_permission,
-            get_wake_word_enabled,
-            set_wake_word_enabled,
-            get_wake_word_record,
-            set_wake_word_record,
-            get_llm_mode_wake_word,
-            set_llm_mode_wake_word,
-            get_wake_word_command,
-            set_wake_word_command,
-            get_wake_word_cancel,
-            set_wake_word_cancel,
-            get_wake_word_validate,
-            set_wake_word_validate,
-            get_wake_word_submit,
-            set_wake_word_submit,
-            get_silence_timeout_ms,
-            set_silence_timeout_ms,
-            get_auto_enter_after_wake_word,
-            set_auto_enter_after_wake_word,
-            get_smartmic_enabled,
-            set_smartmic_enabled,
-            get_smartmic_port,
-            set_smartmic_port,
-            start_smartmic_server,
-            stop_smartmic_server,
-            get_smartmic_qr_code,
-            get_paired_devices,
-            remove_paired_device,
-            reset_smartmic_tokens,
-            get_smartmic_relay_enabled,
-            set_smartmic_relay_enabled,
-            get_smartmic_relay_url,
-            set_smartmic_relay_url,
-            get_smartmic_machine_id,
-            set_smartmic_machine_id,
-            get_smartmic_machine_id_enabled,
-            set_smartmic_machine_id_enabled,
-            get_smartmic_token_ttl_hours,
-            set_smartmic_token_ttl_hours,
-            get_smartmic_bind_address,
-            set_smartmic_bind_address,
-            list_smartmic_network_interfaces,
-            get_smartmic_hostname,
             get_streaming_preview,
             set_streaming_preview,
             set_overlay_size,
@@ -602,7 +524,6 @@ pub fn run() {
                 #[cfg(target_os = "linux")]
                 crate::utils::wayland_inject::shutdown();
                 crate::utils::enigo_session::shutdown(app_handle);
-                crate::smartmic::input_bridge::shutdown();
                 audio::output_volume::restore_pending(app_handle);
                 llm::engine::shutdown();
             }

@@ -38,12 +38,6 @@ Fermez les fenetres, coupez les autres sources audio, eloignez-vous des ventilat
 
 Assurez-vous de maintenir le raccourci pendant toute la duree souhaitee.
 
-### En mode activation vocale
-
-Le mode vocal s'arrete quand le volume descend sous le seuil de silence. Si le volume de votre micro est trop bas, il coupe trop tot.
-
-**Solution** : Augmentez le volume du micro ou ajustez le delai de silence (defaut : 1,5 seconde).
-
 ### Duree maximale
 
 Les enregistrements sont limites a **5 minutes**.

@@ -86,7 +86,7 @@ pub struct AppSettings {
     pub streaming_text_width: u32,
     pub streaming_font_size: u32,
     pub streaming_max_lines: u32,
-    pub result_panel_mode: String, // "off" | "command" | "command_llm" | "all"
+    pub result_panel_mode: String, // "off" | "command_llm" (Prompt Mode) | "all"
     pub result_panel_duration_secs: u64,
     pub remove_hesitations: bool,
     pub voice_commands: bool,
@@ -203,7 +203,7 @@ impl Default for AppSettings {
             streaming_text_width: 450,
             streaming_font_size: 11,
             streaming_max_lines: 5,
-            result_panel_mode: "command".to_string(),
+            result_panel_mode: "off".to_string(),
             result_panel_duration_secs: 5,
             remove_hesitations: true,
             voice_commands: true,

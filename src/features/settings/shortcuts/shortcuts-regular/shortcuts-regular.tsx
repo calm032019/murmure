@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Lightbulb, Mic, Settings, Sparkles, Zap } from 'lucide-react';
+import { Lightbulb, Settings, Sparkles } from 'lucide-react';
 import { Typography } from '@/components/typography';
 import { ShortcutButton } from './shortcut-button/shortcut-button';
 import { LlmModeShortcuts } from './llm-mode-shortcuts/llm-mode-shortcuts';
@@ -33,12 +33,6 @@ export const ShortcutsRegular = () => {
         resetShortcut: resetCancelShortcut,
     } = useShortcut(SHORTCUT_CONFIGS.cancel);
 
-    const {
-        shortcut: commandShortcut,
-        setShortcut: setCommandShortcut,
-        resetShortcut: resetCommandShortcut,
-    } = useShortcut(SHORTCUT_CONFIGS.command);
-
     const llmMode1 = useShortcut(SHORTCUT_CONFIGS.llmMode1);
     const llmMode2 = useShortcut(SHORTCUT_CONFIGS.llmMode2);
     const llmMode3 = useShortcut(SHORTCUT_CONFIGS.llmMode3);
@@ -49,13 +43,7 @@ export const ShortcutsRegular = () => {
     const llmTransform3 = useShortcut(SHORTCUT_CONFIGS.llmTransform3);
     const llmTransform4 = useShortcut(SHORTCUT_CONFIGS.llmTransform4);
 
-    const {
-        shortcut: voiceModeToggleShortcut,
-        setShortcut: setVoiceModeToggleShortcut,
-        resetShortcut: resetVoiceModeToggleShortcut,
-    } = useShortcut(SHORTCUT_CONFIGS.voiceModeToggle);
-
-    const { llmConnectEnabled, commandModeEnabled } = useLlmExtensionsEnabled();
+    const { llmConnectEnabled } = useLlmExtensionsEnabled();
     const llmModeNames = useLlmModeNames();
     const visibleModeCount = llmModeNames.length > 0 ? llmModeNames.length : 1;
 
@@ -87,8 +75,6 @@ export const ShortcutsRegular = () => {
         { id: 'record', name: recordTitle, value: recordShortcut },
         { id: 'lastTranscript', name: t('Paste last transcript'), value: lastTranscriptShortcut },
         { id: 'cancel', name: t('Cancel recording'), value: cancelShortcut },
-        { id: 'voiceModeToggle', name: t('Toggle Voice Mode'), value: voiceModeToggleShortcut },
-        { id: 'command', name: t('Command, free prompt'), value: commandShortcut },
         { id: 'llmMode1', name: dictateLabel(0), value: llmMode1.shortcut },
         { id: 'llmMode2', name: dictateLabel(1), value: llmMode2.shortcut },
         { id: 'llmMode3', name: dictateLabel(2), value: llmMode3.shortcut },
@@ -161,44 +147,6 @@ export const ShortcutsRegular = () => {
                         />
                     </SettingsUI.Item>
                 </SettingsUI.Section>
-
-                <SettingsUI.Section title={t('Voice Mode')} icon={Mic} titleTestId="voice-mode-title">
-                    <SettingsUI.Item>
-                        <SettingsUI.Description className="flex-1 min-w-0">
-                            <Typography.Title>{t('Toggle Voice Mode')}</Typography.Title>
-                            <Typography.Paragraph>{t('Mutes or unmutes Voice Mode listening.')}</Typography.Paragraph>
-                        </SettingsUI.Description>
-                        <ShortcutButton
-                            keyName={t('Toggle Voice Mode')}
-                            shortcut={voiceModeToggleShortcut}
-                            saveShortcut={setVoiceModeToggleShortcut}
-                            resetShortcut={resetVoiceModeToggleShortcut}
-                            dataTestId="voice-mode-toggle-button"
-                            existingShortcuts={othersOf('voiceModeToggle')}
-                        />
-                    </SettingsUI.Item>
-                </SettingsUI.Section>
-
-                {commandModeEnabled && (
-                    <SettingsUI.Section title={t('Command Mode')} icon={Zap} titleTestId="command-mode-title">
-                        <SettingsUI.Item>
-                            <SettingsUI.Description className="flex-1 min-w-0">
-                                <Typography.Title>{t('Command, free prompt')}</Typography.Title>
-                                <Typography.Paragraph>
-                                    {t('Runs a voice command on the selected text, or asks a question.')}
-                                </Typography.Paragraph>
-                            </SettingsUI.Description>
-                            <ShortcutButton
-                                keyName={t('Command, free prompt')}
-                                shortcut={commandShortcut}
-                                saveShortcut={setCommandShortcut}
-                                resetShortcut={resetCommandShortcut}
-                                dataTestId="command-button"
-                                existingShortcuts={othersOf('command')}
-                            />
-                        </SettingsUI.Item>
-                    </SettingsUI.Section>
-                )}
 
                 {llmConnectEnabled && (
                     <SettingsUI.Section title={t('Prompt Mode')} icon={Sparkles} titleTestId="llm-connect-title">

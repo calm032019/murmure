@@ -20,12 +20,6 @@ export const useOverlayError = () => {
         const unlistenLimitReached = listen<string>('recording-limit-reached', () => {
             setError(i18n.t('Recording limited to 20 min'));
         });
-        const unlistenCommandNotConfigured = listen('command-not-configured', () => {
-            setError(i18n.t('Command has no model'));
-        });
-        const unlistenCommandDisabled = listen('command-disabled', () => {
-            setError(i18n.t('Command Mode is off'));
-        });
         const unlistenLlmConnectDisabled = listen('llm-connect-disabled', () => {
             setError(i18n.t('Prompt Mode is off'));
         });
@@ -34,8 +28,6 @@ export const useOverlayError = () => {
             unlistenRecordingError.then((u) => u());
             unlistenChunkError.then((u) => u());
             unlistenLimitReached.then((u) => u());
-            unlistenCommandNotConfigured.then((u) => u());
-            unlistenCommandDisabled.then((u) => u());
             unlistenLlmConnectDisabled.then((u) => u());
         };
     }, []);

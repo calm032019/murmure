@@ -9,10 +9,8 @@ Murmure expose les commandes suivantes. Chacune peut être assignée à un racco
 | Commande | Effet |
 | -------- | ----- |
 | `murmure --transcription` | Toggle la transcription standard ON/OFF |
-| `murmure --transcription-command` | Toggle la transcription en mode Command |
 | `murmure --paste-last` | Colle la dernière transcription |
 | `murmure --cancel` | Annule l'enregistrement en cours et revient en idle |
-| `murmure --voice-mode` | Toggle le Voice Mode ON/OFF |
 | `murmure --quit` | Quitte complètement Murmure |
 | `murmure --llm-mode 1` | Lance une transcription avec le prompt LLM 1 |
 | `murmure --llm-mode 2` | Lance une transcription avec le prompt LLM 2 |

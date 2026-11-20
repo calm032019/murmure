@@ -57,8 +57,6 @@ export interface ExportedLlmConnect {
 export type CategoryKey =
     | 'settings'
     | 'shortcuts'
-    | 'voice_mode'
-    | 'smartmic'
     | 'formatting_rules'
     | 'llm_connect'
     | 'dictionary';

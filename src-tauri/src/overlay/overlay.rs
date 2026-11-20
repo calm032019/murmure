@@ -452,8 +452,8 @@ fn result_panel_allows(setting: &str, mode: &str) -> bool {
     match setting {
         "off" => false,
         "all" => true,
-        "command_llm" => matches!(mode, "command" | "llm" | "transform"),
-        _ => mode == "command",
+        "command_llm" => matches!(mode, "llm" | "transform"),
+        _ => false,
     }
 }
 
@@ -674,7 +674,7 @@ pub fn clear_pending_flash(app_handle: &AppHandle) {
 mod tests {
     use super::*;
 
-    const MODES: [&str; 4] = ["standard", "command", "llm", "transform"];
+    const MODES: [&str; 3] = ["standard", "llm", "transform"];
 
     fn allowed_modes(setting: &str) -> Vec<&'static str> {
         MODES
@@ -689,16 +689,8 @@ mod tests {
     }
 
     #[test]
-    fn command_allows_command_only() {
-        assert_eq!(allowed_modes("command"), ["command"]);
-    }
-
-    #[test]
     fn command_llm_excludes_standard_only() {
-        assert_eq!(
-            allowed_modes("command_llm"),
-            ["command", "llm", "transform"]
-        );
+        assert_eq!(allowed_modes("command_llm"), ["llm", "transform"]);
     }
 
     #[test]
@@ -707,17 +699,16 @@ mod tests {
     }
 
     #[test]
-    fn unknown_setting_falls_back_to_command() {
-        assert_eq!(allowed_modes(""), ["command"]);
-        assert_eq!(allowed_modes("commands"), ["command"]);
-        assert_eq!(allowed_modes("Commands"), ["command"]);
+    fn unknown_setting_shows_nothing() {
+        assert!(allowed_modes("").is_empty());
+        assert!(allowed_modes("command").is_empty());
     }
 
     fn stage_pending_result() {
         *PENDING_RESULT.lock() = Some(FinalResultPayload {
             text: "result".to_string(),
             prompt_name: None,
-            mode: "command".to_string(),
+            mode: "llm".to_string(),
         });
     }
 

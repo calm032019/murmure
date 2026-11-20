@@ -67,23 +67,6 @@ pub fn set_last_transcript_shortcut(app: AppHandle, binding: String) -> Result<S
 }
 
 // ============================================================================
-// Command Shortcut
-// ============================================================================
-
-#[command]
-pub fn get_command_shortcut(app: AppHandle) -> Result<String, String> {
-    let s = settings::load_settings(&app);
-    Ok(s.command_shortcut)
-}
-
-#[command]
-pub fn set_command_shortcut(app: AppHandle, binding: String) -> Result<String, String> {
-    apply_shortcut(&app, &binding, ShortcutAction::StartRecordingCommand, |s| {
-        &mut s.command_shortcut
-    })
-}
-
-// ============================================================================
 // Cancel Recording Shortcut
 // ============================================================================
 
@@ -250,23 +233,6 @@ pub fn set_llm_transform_shortcut(
             _ => &mut s.llm_transform_4_shortcut,
         },
     )
-}
-
-// ============================================================================
-// Voice Mode Toggle Shortcut
-// ============================================================================
-
-#[command]
-pub fn get_voice_mode_toggle_shortcut(app: AppHandle) -> Result<String, String> {
-    let s = settings::load_settings(&app);
-    Ok(s.voice_mode_toggle_shortcut)
-}
-
-#[command]
-pub fn set_voice_mode_toggle_shortcut(app: AppHandle, binding: String) -> Result<String, String> {
-    apply_shortcut(&app, &binding, ShortcutAction::ToggleVoiceMode, |s| {
-        &mut s.voice_mode_toggle_shortcut
-    })
 }
 
 // ============================================================================

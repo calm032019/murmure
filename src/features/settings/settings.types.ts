@@ -34,7 +34,7 @@ export interface SystemSettings {
 export interface ShortcutSettings {
     record_shortcut: string;
     last_transcript_shortcut: string;
-    command_shortcut: string;
+    command_shortcut?: string;
     llm_mode_1_shortcut: string;
     llm_mode_2_shortcut: string;
     llm_mode_3_shortcut: string;
@@ -43,7 +43,7 @@ export interface ShortcutSettings {
     llm_transform_2_shortcut: string;
     llm_transform_3_shortcut: string;
     llm_transform_4_shortcut: string;
-    voice_mode_toggle_shortcut: string;
+    voice_mode_toggle_shortcut?: string;
     cancel_shortcut: string;
 }
 

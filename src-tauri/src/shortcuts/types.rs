@@ -11,12 +11,10 @@ pub enum KeyEventType {
 #[derive(Debug, Clone, PartialEq)]
 pub enum ShortcutAction {
     StartRecording,
-    StartRecordingCommand,
     PasteLastTranscript,
     StartRecordingLlmMode(usize),
     TransformSelectionLlmMode(usize),
     CancelRecording,
-    ToggleVoiceMode,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -54,12 +52,10 @@ pub enum RecordingSource {
     None,
     Standard,
     Llm,
-    Command,
 }
 
 pub struct RecordingState {
     pub(crate) source: Mutex<RecordingSource>,
-    pub(crate) last_mode_switch: Mutex<Instant>,
     pub(crate) last_toggle_stop: Mutex<Instant>,
     pub(crate) last_toggle_start: Mutex<Instant>,
 }
@@ -69,7 +65,6 @@ impl RecordingState {
         let past = Instant::now() - Duration::from_secs(1);
         Self {
             source: Mutex::new(RecordingSource::None),
-            last_mode_switch: Mutex::new(past),
             last_toggle_stop: Mutex::new(past),
             last_toggle_start: Mutex::new(past),
         }

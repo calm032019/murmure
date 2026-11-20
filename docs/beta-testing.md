@@ -28,7 +28,6 @@ Do what you can, even one box helps. Start with the four essentials, they take a
 - [ ] Open every page once, and tell us if something looks broken, cut or hard to read
 - [ ] On the extension pages you use, turn the extension off and on with the switch next to the title, then restart Murmure and check it stayed as you left it
 - [ ] In Personalize > Dictionary, remove a word, click **Undo**, and check the word comes back
-- [ ] If you use Prompt Mode or Command Mode: enable Command Mode, then press the Command shortcut with nothing selected and ask a question. Then select a sentence and say "translate to English"
 - [ ] Open Extensions > Local API, enable it, and use **Try it** with a short WAV file
 - [ ] Dictate something long, over a minute, and check nothing is missing at the end
 - [ ] Open the tray menu and check it is in your language
@@ -67,7 +66,7 @@ Thank you for your contribution!
 
 ### Result after dictation
 
-- The overlay can stay on screen after a dictation, with the text and a copy button. Choose when in Settings > System > **Show result after dictation** (Off, Command, Command and LLM, All dictations), and choose how long it stays
+- The overlay can stay on screen after a dictation, with the text and a copy button. Choose when in Settings > System > **Show result after dictation** (Off, Prompt Mode only, All dictations), and choose how long it stays
 - Move the mouse over the result to keep it on screen
 
 ### Automatic insert
@@ -76,11 +75,9 @@ Thank you for your contribution!
 - The **Paste last transcript** shortcut always pastes, even when Automatic insert is off
 - If you used the insertion method "None (manual paste)", it is converted for you. Automatic insert is off and your other settings are kept
 
-### Prompt Mode and Command Mode
+### Prompt Mode
 
 - LLM Connect is now called Prompt Mode
-- Command Mode is a separate extension, with its own model. Enable it in Extensions > Command Mode
-- With nothing selected, a command now answers your question instead of repeating it
 
 ### Local API
 

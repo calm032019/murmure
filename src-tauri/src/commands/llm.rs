@@ -13,7 +13,6 @@ pub fn set_llm_connect_settings(
 ) -> Result<(), String> {
     llm::save_llm_connect_settings(&app, &settings)?;
     let _ = app.emit("llm-settings-updated", &settings);
-    llm::helpers::restart_wake_word_if_active(&app);
     Ok(())
 }
 

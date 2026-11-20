@@ -60,11 +60,6 @@ export const SHORTCUT_CONFIGS = {
         getCommand: 'get_last_transcript_shortcut',
         setCommand: 'set_last_transcript_shortcut',
     },
-    command: {
-        defaultShortcut: 'ctrl+shift+x',
-        getCommand: 'get_command_shortcut',
-        setCommand: 'set_command_shortcut',
-    },
     record: {
         defaultShortcut: 'ctrl+space',
         getCommand: 'get_record_shortcut',
@@ -118,11 +113,6 @@ export const SHORTCUT_CONFIGS = {
         defaultShortcut: 'ctrl+backspace',
         getCommand: 'get_cancel_shortcut',
         setCommand: 'set_cancel_shortcut',
-    },
-    voiceModeToggle: {
-        defaultShortcut: 'ctrl+shift+0',
-        getCommand: 'get_voice_mode_toggle_shortcut',
-        setCommand: 'set_voice_mode_toggle_shortcut',
     },
 };
 

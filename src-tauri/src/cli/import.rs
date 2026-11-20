@@ -371,7 +371,6 @@ pub fn apply_hot_reload_side_effects(app: &AppHandle) {
     let llm_settings = crate::llm::helpers::load_llm_connect_settings(app);
     let _ = app.emit("llm-settings-updated", &llm_settings);
 
-    crate::llm::helpers::restart_wake_word_if_active(app);
 
     match crate::dictionary::store::load(app) {
         Ok(dict) => {

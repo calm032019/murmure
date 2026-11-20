@@ -98,12 +98,6 @@ Si rien n'est selectionne, Murmure affiche un toast demandant de selectionner du
 
 Si un prompt est vide, Dicter et Transformer affichent un toast : "Le prompt N n'est pas configure. Ouvrez Mode Prompt pour le configurer."
 
-## Commande
-
-Commande ne fait pas partie des prompts. Elle a sa propre page dans **Extensions** > **Mode Commande** et son propre modele, donc changer de prompt ne change jamais le modele utilise par vos commandes. Voir [Commandes](commands.fr.md).
-
-Le mode prompt et le mode commande s'activent separement, chacun depuis sa page. La configuration du modele est partagee, une fois faite depuis une page il suffit d'activer l'autre. Desactiver une extension conserve vos prompts, modeles et serveurs.
-
 ## Raccourcis
 
 Les raccourcis Dicter et Transformer sont independants et configurables par prompt dans **Parametres > Raccourcis**, nommes **Dicter avec {nom du prompt}** et **Transformer avec {nom du prompt}**. Chacun peut etre rebinde sur n'importe quelle combinaison, y compris un bouton de souris ou une touche `F13` a `F20`.

@@ -27,8 +27,6 @@ Go to **Settings** > **System** to pick a recording mode:
 | **Push-to-talk** (default) | Hold the shortcut to record, release to stop |
 | **Toggle-to-talk**         | Press once to start, press again to stop     |
 
-For hands-free recording with wake words, see [Voice Mode](../features/voice-mode.md) (separate feature in Extensions).
-
 ## Select Your Microphone
 
 By default, Murmure uses your system's default microphone. To choose a specific one:
@@ -83,5 +81,3 @@ Go to **Settings** > **System** and enable **Launch on startup**. Murmure will s
 - [Dictionary](../features/dictionary.md) - Add custom words for better recognition
 - [Formatting Rules](../features/formatting-rules.md) - Auto-correct and transform text
 - [Prompt Mode](../features/llm-connect.md) - Post-process with a local AI
-- [Voice Mode](../features/voice-mode.md) - Hands-free activation with wake words
-- [Smart Speech Mic](../features/smart-speech-mic.md) - Use your phone as a wireless mic

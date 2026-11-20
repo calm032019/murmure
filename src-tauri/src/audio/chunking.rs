@@ -9,7 +9,7 @@ use crate::formatting_rules;
 use crate::formatting_rules::highlighter::{
     apply_formatting_with_highlights_and_original, HighlightRange,
 };
-use crate::wake_word::wake_word::normalize_text;
+use crate::utils::text::normalize_text;
 use log::{debug, error};
 use parking_lot::Mutex as PlMutex;
 use serde::Serialize;

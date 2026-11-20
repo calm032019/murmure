@@ -1,21 +1,15 @@
 import {
     Home,
     Settings,
-    Heart,
     ChevronRight,
     Keyboard,
     BookText,
     Power,
-    Bug,
     Sparkles,
     Wrench,
     AlignLeft,
-    Newspaper,
-    Mic,
     ArrowDownUp,
     Puzzle,
-    Smartphone,
-    Zap,
     Plug,
 } from 'lucide-react';
 import { Link, useLocation } from '@tanstack/react-router';
@@ -34,8 +28,6 @@ import {
     SidebarMenuSubButton,
 } from '../../../components/sidebar';
 import { useGetVersion } from '../hooks/use-get-version';
-import { UpdateChecker } from '../../update-checker/update-checker';
-import { Separator } from '@/components/separator';
 import { useTranslation } from '@/i18n';
 import { useDictionaryRevampSeen } from '@/features/personalize/custom-dictionary/hooks/use-dictionary-revamp-seen';
 import appIcon from '@/assets/app-icon.png';
@@ -61,28 +53,10 @@ const getPersonalizeSubItems = (t: (key: string) => string) => [
 
 const getExtensionsSubItems = (t: (key: string) => string) => [
     {
-        name: t('Command Mode'),
-        url: '/extensions/command-mode',
-        icon: Zap,
-        dataTestId: 'command-mode-tab',
-    },
-    {
         name: t('Prompt Mode'),
         url: '/extensions/llm-connect',
         icon: Sparkles,
         dataTestId: 'llm-connect-tab',
-    },
-    {
-        name: t('Voice Mode'),
-        url: '/extensions/voice-mode',
-        icon: Mic,
-        dataTestId: 'voice-mode-tab',
-    },
-    {
-        name: t('Smart Mic'),
-        url: '/extensions/smart-mic',
-        icon: Smartphone,
-        dataTestId: 'smart-mic-tab',
     },
     {
         name: t('Local API'),
@@ -134,7 +108,6 @@ export const AppSidebar = () => {
     const isPersonalizeActive = isPathInItems(pathname, personalizeSubItems);
     const isSettingsActive = isPathInItems(pathname, settingsSubItems);
     const isExtensionsActive = isPathInItems(pathname, extensionsSubItems);
-    const isAboutActive = pathname === '/about';
     const { shortcut: recordShortcut } = useShortcut(SHORTCUT_CONFIGS.record);
     const isWayland = useIsWayland();
 
@@ -251,39 +224,7 @@ export const AppSidebar = () => {
                 )}
             </SidebarContent>
             <SidebarFooter className="bg-transparent">
-                <a
-                    href={
-                        version.length > 0
-                            ? `https://github.com/Kieirra/murmure/releases/tag/${version}`
-                            : 'https://github.com/Kieirra/murmure/releases/latest'
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground text-xs hover:text-foreground transition-colors flex items-center gap-2 px-2"
-                >
-                    <Newspaper className="w-4 h-4" />
-                    <span>{t('Release notes')}</span>
-                </a>
-                <a
-                    href="https://github.com/Kieirra/murmure/issues/new"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground text-xs hover:text-foreground transition-colors flex items-center gap-2 px-2"
-                >
-                    <Bug className="w-4 h-4" />
-                    <span>{t('Report a bug')}</span>
-                </a>
-                <Link
-                    to="/about"
-                    className={`${isAboutActive ? 'text-sky-400' : 'text-muted-foreground hover:text-foreground'} text-xs transition-colors flex items-center gap-2 px-2`}
-                    data-testid="about-tab"
-                >
-                    <Heart className={`w-4 h-4 ${isAboutActive ? 'text-sky-400' : 'text-rose-300/70'}`} />
-                    <span>{t('Support Murmure')}</span>
-                </Link>
-                <Separator />
                 <div className="flex items-center gap-2 justify-center">
-                    <UpdateChecker />
                     <p className="text-xs text-muted-foreground">{version}</p>
                 </div>
             </SidebarFooter>

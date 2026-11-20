@@ -24,7 +24,7 @@ Pas encore. Parakeet detecte automatiquement la langue. Un selecteur de langue e
 
 ### Existe-t-il une application mobile ?
 
-Non. Murmure necessite l'acces au presse-papier et la simulation clavier, que les OS mobiles n'autorisent pas. Vous pouvez cependant utiliser [Smart Speech Mic](features/smart-speech-mic.md) pour utiliser votre telephone comme micro sans fil.
+Non. Murmure necessite l'acces au presse-papier et la simulation clavier, que les OS mobiles n'autorisent pas.
 
 ### Existe-t-il une version web ?
 

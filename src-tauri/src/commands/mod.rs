@@ -14,9 +14,7 @@ pub mod platform;
 pub mod record_mode;
 pub mod settings;
 pub mod shortcuts;
-pub mod smartmic;
 pub mod stats;
-pub mod wake_word;
 
 pub use appearance::*;
 pub use clipboard::*;
@@ -33,6 +31,4 @@ pub use platform::*;
 pub use record_mode::*;
 pub use settings::*;
 pub use shortcuts::*;
-pub use smartmic::*;
 pub use stats::*;
-pub use wake_word::*;

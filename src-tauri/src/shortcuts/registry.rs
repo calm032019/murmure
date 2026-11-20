@@ -30,11 +30,6 @@ impl ShortcutRegistry {
             activation_mode.clone(),
         );
         push_if_set(
-            &settings.command_shortcut,
-            ShortcutAction::StartRecordingCommand,
-            activation_mode.clone(),
-        );
-        push_if_set(
             &settings.last_transcript_shortcut,
             ShortcutAction::PasteLastTranscript,
             ActivationMode::PushToTalk,
@@ -75,12 +70,6 @@ impl ShortcutRegistry {
             );
         }
 
-        push_if_set(
-            &settings.voice_mode_toggle_shortcut,
-            ShortcutAction::ToggleVoiceMode,
-            ActivationMode::PushToTalk,
-        );
-
         // Sort bindings by key count descending so that more specific shortcuts
         // (e.g. Ctrl+A+Space) are matched before less specific ones (e.g. Ctrl+Space)
         bindings.sort_by(|a, b| b.keys.len().cmp(&a.keys.len()));
@@ -92,7 +81,6 @@ impl ShortcutRegistry {
         matches!(
             action,
             ShortcutAction::StartRecording
-                | ShortcutAction::StartRecordingCommand
                 | ShortcutAction::StartRecordingLlmMode(_)
         )
     }

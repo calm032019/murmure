@@ -122,12 +122,6 @@ If nothing is selected, Murmure shows a toast asking you to select text first an
 
 If a prompt is empty, Dictate and Transform show a toast: "Prompt N is not configured. Open Prompt Mode to set it up."
 
-## Command
-
-Command is not one of the prompts. It has its own page in **Extensions** > **Command Mode** and its own model, so switching prompts never changes the model used by your commands. See [Commands](commands.md).
-
-Prompt Mode and Command Mode are turned on separately, each from its own page. The model setup is shared, so once it is done from one page, the other page only needs to be turned on. Turning an extension off keeps your prompts, models and servers.
-
 ## Shortcuts
 
 Dictate and Transform shortcuts are independent and configurable per prompt in **Settings > Shortcuts**, listed as **Dictate with {prompt name}** and **Transform with {prompt name}**. Each can be rebound to any key combination, including a mouse button or an `F13`-`F20` key.

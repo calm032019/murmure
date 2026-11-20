@@ -27,8 +27,6 @@ Allez dans **Parametres** > **Systeme** pour choisir un mode :
 | **Push-to-talk** (defaut) | Maintenez le raccourci pour enregistrer, relachez pour arreter |
 | **Toggle-to-talk**        | Appuyez une fois pour demarrer, une fois pour arreter          |
 
-Pour l'enregistrement mains libres par mot-cle, voir [Mode vocal](../features/voice-mode.md) (fonctionnalite separee dans Extensions).
-
 ## Selectionner le microphone
 
 Par defaut, Murmure utilise le microphone systeme. Pour en choisir un specifique :
@@ -83,5 +81,3 @@ Allez dans **Parametres** > **Systeme** et activez **Lancer au demarrage**. Murm
 - [Dictionnaire](../features/dictionary.md) - Ajouter des mots pour une meilleure reconnaissance
 - [Regles de formatage](../features/formatting-rules.md) - Corriger et transformer le texte automatiquement
 - [Mode Prompt](../features/llm-connect.md) - Post-traitement avec une IA locale
-- [Mode vocal](../features/voice-mode.md) - Activation mains libres par mot-cle
-- [Smart Speech Mic](../features/smart-speech-mic.md) - Votre telephone comme micro sans fil

@@ -6,9 +6,7 @@ import { getPresetLabel, getPromptByPreset } from '../llm-connect.helpers';
 
 export type LLMConnectPage = ReturnType<typeof useLLMConnectPage>;
 
-type LLMExtension = 'llm-connect' | 'command-mode';
-
-export const useLLMConnectPage = (extension: LLMExtension) => {
+export const useLLMConnectPage = () => {
     const { t, i18n } = useTranslation();
     const {
         settings,
@@ -19,7 +17,6 @@ export const useLLMConnectPage = (extension: LLMExtension) => {
         isLoading,
         isSettingsLoaded,
         updateSettings,
-        getLatestSettings,
         testConnection,
         testRemoteConnection,
         fetchModels,
@@ -31,14 +28,13 @@ export const useLLMConnectPage = (extension: LLMExtension) => {
     const [showModelSelector, setShowModelSelector] = useState(false);
     const [isSetupRequested, setIsSetupRequested] = useState(false);
 
-    const isExtensionEnabled = extension === 'command-mode' ? settings.command.enabled : settings.enabled;
-    const isEnabled = settings.onboarding_completed && isExtensionEnabled;
+    const isEnabled = settings.onboarding_completed && settings.enabled;
 
     const isLocalConfigured = connectionStatus === 'connected';
     const isRemoteConfigured = settings.remote_url.length > 0;
 
     const showInstallModel =
-        settings.modes.some((m) => (m.provider ?? 'local') === 'local') || settings.command.provider === 'local';
+        settings.modes.some((m) => (m.provider ?? 'local') === 'local');
 
     const handleTestConnection = async (url: string) => {
         const result = await testConnection(url);
@@ -66,18 +62,17 @@ export const useLLMConnectPage = (extension: LLMExtension) => {
     };
 
     const buildDefaultMode = (): LLMMode => {
-        const name = t(getPresetLabel('general'));
+        const name = t(getPresetLabel('clean'));
         return {
             name,
-            prompt: getPromptByPreset('general', i18n.language),
+            prompt: getPromptByPreset('clean', i18n.language),
             model: '',
             provider: 'local',
-            wake_word: `alix ${name.toLowerCase()}`,
+            wake_word: '',
         };
     };
 
-    const buildEnabledUpdate = (enabled: boolean) =>
-        extension === 'command-mode' ? { command: { ...getLatestSettings().command, enabled } } : { enabled };
+    const buildEnabledUpdate = (enabled: boolean) => ({ enabled });
 
     const setEnabled = async (enabled: boolean) => {
         await updateSettings(buildEnabledUpdate(enabled));

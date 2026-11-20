@@ -28,7 +28,6 @@ Faites ce que vous pouvez, même une seule case nous aide. Commencez par les qua
 - [ ] Ouvrez chaque page une fois, et dites-nous si quelque chose semble cassé, coupé ou difficile à lire
 - [ ] Sur les pages des extensions que vous utilisez, désactivez puis réactivez l'extension avec l'interrupteur à côté du titre, redémarrez Murmure et vérifiez qu'elle est restée comme vous l'avez laissée
 - [ ] Dans Personnaliser > Dictionnaire, supprimez un mot, cliquez sur **Annuler**, et vérifiez que le mot revient
-- [ ] Si vous utilisez le Mode Prompt ou le Mode Commande, activez le Mode Commande, appuyez sur le raccourci Commande sans rien sélectionner et posez une question. Sélectionnez ensuite une phrase et dites « traduis en anglais »
 - [ ] Ouvrez Extensions > API locale, activez-la, et utilisez **Essayer** avec un court fichier WAV
 - [ ] Dictez un texte long, plus d'une minute, et vérifiez qu'il ne manque rien à la fin
 - [ ] Ouvrez le menu de la barre système et vérifiez qu'il est dans votre langue
@@ -67,7 +66,7 @@ Merci pour votre contribution !
 
 ### Résultat après la dictée
 
-- L'overlay peut rester affiché après une dictée, avec le texte et un bouton pour le copier. Choisissez quand dans Paramètres > Système > **Afficher le résultat après la dictée** (Désactivé, Commande, Commande et LLM, Toutes les dictées), et choisissez combien de temps il reste affiché
+- L'overlay peut rester affiché après une dictée, avec le texte et un bouton pour le copier. Choisissez quand dans Paramètres > Système > **Afficher le résultat après la dictée** (Désactivé, Mode Prompt uniquement, Toutes les dictées), et choisissez combien de temps il reste affiché
 - Passez la souris sur le résultat pour le garder à l'écran
 
 ### Insertion automatique
@@ -76,11 +75,9 @@ Merci pour votre contribution !
 - Le raccourci **Coller la dernière transcription** colle toujours, même quand l'insertion automatique est désactivée
 - Si vous utilisiez la méthode d'insertion « Aucune (collage manuel) », elle est convertie pour vous. L'insertion automatique est désactivée et vos autres réglages sont conservés
 
-### Mode Prompt et Mode Commande
+### Mode Prompt
 
 - LLM Connect s'appelle maintenant Mode Prompt
-- Le Mode Commande devient une extension à part, avec son propre modèle. Activez-le dans Extensions > Mode Commande
-- Sans sélection, une commande répond maintenant à votre question au lieu de la répéter
 
 ### API locale
 

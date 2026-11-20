@@ -15,8 +15,7 @@ export const LlmConnectSubItems = ({ modes, selection, onToggle, disabled }: Llm
     const { t } = useTranslation();
 
     const items = [
-        { key: 'connection', label: t('LLM servers (Command Mode and Prompt Mode)') },
-        ...('command' in selection ? [{ key: 'command', label: t('Command Mode') }] : []),
+        { key: 'connection', label: t('AI model settings') },
         ...modes.map((mode, index) => ({ key: SUB_ITEM_KEY.mode(index), label: mode.name })),
     ];
 

@@ -8,12 +8,6 @@ export const ToastEventListener = () => {
 
     useEffect(() => {
         const unlistens = [
-            listen('command-not-configured', () => {
-                toast.info(t('The command has no model. Choose one in Command Mode.'), { autoClose: 5000 });
-            }),
-            listen('command-disabled', () => {
-                toast.info(t('Command Mode is off. Turn it on in Command Mode.'), { autoClose: 5000 });
-            }),
             listen('llm-connect-disabled', () => {
                 toast.info(t('Prompt Mode is off. Turn it on in Prompt Mode.'), { autoClose: 5000 });
             }),

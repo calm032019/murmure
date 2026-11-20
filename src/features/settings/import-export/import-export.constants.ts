@@ -1,4 +1,4 @@
-import { Settings, Keyboard, MicVocal, Smartphone, AlignLeft, Sparkles, BookText } from 'lucide-react';
+import { Settings, Keyboard, AlignLeft, Sparkles, BookText } from 'lucide-react';
 import { CategoryDefinition } from './import-export.types';
 
 export const CURRENT_MURMURE_FORMAT_VERSION = 1;
@@ -29,20 +29,6 @@ export const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
         subItems: [],
     },
     {
-        key: 'voice_mode',
-        label: 'Voice Mode',
-        icon: MicVocal,
-        supportsMerge: false,
-        subItems: [],
-    },
-    {
-        key: 'smartmic',
-        label: 'SmartMic',
-        icon: Smartphone,
-        supportsMerge: false,
-        subItems: [],
-    },
-    {
         key: 'formatting_rules',
         label: 'Formatting Rules',
         icon: AlignLeft,
@@ -55,8 +41,7 @@ export const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
         icon: Sparkles,
         supportsMerge: true,
         subItems: [
-            { key: 'connection', label: 'LLM servers (Command Mode and Prompt Mode)' },
-            { key: 'command', label: 'Command Mode' },
+            { key: 'connection', label: 'AI model settings' },
         ],
     },
     {

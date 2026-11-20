@@ -6,7 +6,7 @@
 //! The fix transcribes a short window spanning the cut, where the model can
 //! hear both sides, and keeps its verdict on whether the sentence really ended.
 
-use crate::wake_word::wake_word::normalize_text;
+use crate::utils::text::normalize_text;
 
 /// Audio kept on each side of a silence cut for the seam re-transcription.
 pub(super) const SEAM_CONTEXT_SECS: f32 = 10.0;

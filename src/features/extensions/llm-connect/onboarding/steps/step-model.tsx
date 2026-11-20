@@ -70,11 +70,11 @@ export const StepModel = ({
             model: modelName,
             modes: [
                 {
-                    name: t(getPresetLabel('general')),
-                    prompt: getPromptByPreset('general', i18n.language),
+                    name: t(getPresetLabel('clean')),
+                    prompt: getPromptByPreset('clean', i18n.language),
                     model: modelName,
                     provider: isRemote ? 'remote' : 'local',
-                    wake_word: `alix ${t(getPresetLabel('general')).toLowerCase()}`,
+                    wake_word: '',
                 },
             ],
             active_mode_index: 0,

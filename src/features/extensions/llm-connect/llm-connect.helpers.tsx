@@ -41,7 +41,7 @@ export const getStatusColorStyles = (connectionStatus: ConnectionStatus) => {
 
 export const getDefaultPrompt = (language: string) => {
     const isFrench = language.startsWith('fr');
-    return PROMPT_PRESETS.general.prompts[isFrench ? 'fr' : 'en'];
+    return PROMPT_PRESETS.clean.prompts[isFrench ? 'fr' : 'en'];
 };
 
 export const getPromptByPreset = (preset: PromptPresetType, language: string): string => {

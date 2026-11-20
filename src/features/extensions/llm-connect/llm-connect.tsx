@@ -12,7 +12,7 @@ import { LLMServerSettings } from './llm-server-settings/llm-server-settings';
 
 export const LLMConnect = () => {
     const { t } = useTranslation();
-    const page = useLLMConnectPage('llm-connect');
+    const page = useLLMConnectPage();
     const { settings, models, remoteModels, isLoading, isSettingsLoaded, updateSettings } = page;
 
     const activeModeIndex = settings.active_mode_index;

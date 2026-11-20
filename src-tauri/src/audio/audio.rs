@@ -21,7 +21,7 @@ pub fn record_audio(app: &AppHandle, mode: RecordingMode) {
         state.set_recording_trigger(RecordingTrigger::Keyboard);
     }
 
-    if matches!(mode, RecordingMode::Llm | RecordingMode::Command) {
+    if matches!(mode, RecordingMode::Llm) {
         crate::llm::warmup_ollama_model_background(app, mode);
     }
 
@@ -136,10 +136,6 @@ fn notify_recording_error(app: &AppHandle) {
     show_recording_notification(app, "recording-error", mic_name);
 }
 
-pub fn notify_recording_limit(app: &AppHandle) {
-    show_recording_notification(app, "recording-limit-reached", String::new());
-}
-
 pub fn stop_recording(app: &AppHandle) -> Option<std::path::PathBuf> {
     debug!("Stopping audio recording...");
     let state = app.state::<AudioState>();
@@ -218,7 +214,7 @@ fn finalize_chunked_session(
             }
             if result.llm_error.is_none() && state.current_session() == my_gen {
                 overlay::show_result_panel_if_allowed(app, mode.as_str(), &text, || match mode {
-                    RecordingMode::Standard | RecordingMode::Command => None,
+                    RecordingMode::Standard => None,
                     RecordingMode::Llm => crate::llm::active_prompt_name(app),
                 });
             }
@@ -292,7 +288,6 @@ fn reset_recording_state(app: &AppHandle) {
     let state = app.state::<AudioState>();
     let _ = app.emit("mic-level", 0.0f32);
     state.set_recording_trigger(RecordingTrigger::Keyboard);
-    crate::wake_word::resume_listener(app);
 }
 
 fn reset_recording_ui(app: &AppHandle) {
@@ -350,26 +345,6 @@ pub fn write_transcription(app: &AppHandle, transcription: &str) -> Result<()> {
 
     debug!("Transcription written to clipboard {}", transcription);
     Ok(())
-}
-
-pub fn simulate_enter_key(app: &AppHandle) -> Result<(), String> {
-    std::thread::sleep(std::time::Duration::from_millis(200));
-
-    #[cfg(target_os = "linux")]
-    {
-        if crate::utils::platform::is_wayland_session() {
-            log::info!("simulate_enter_key: Wayland path (uinput Enter)");
-            return crate::utils::wayland_inject::enter();
-        }
-    }
-
-    log::info!("simulate_enter_key: enigo path");
-    use enigo::{Key, Keyboard};
-    crate::utils::enigo_session::with_enigo(app, |enigo| {
-        enigo
-            .key(Key::Return, enigo::Direction::Click)
-            .map_err(|e| format!("Failed to press Enter: {}", e))
-    })
 }
 
 pub fn write_last_transcription(app: &AppHandle, transcription: &str) -> Result<()> {

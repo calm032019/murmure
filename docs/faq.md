@@ -24,7 +24,7 @@ Not yet. Parakeet auto-detects the language from the audio. A language selector 
 
 ### Is there a mobile app?
 
-No. Murmure requires access to the clipboard and keyboard simulation, which mobile operating systems don't allow. You can, however, use the [Smart Speech Mic](features/smart-speech-mic.md) to use your phone as a wireless microphone.
+No. Murmure requires access to the clipboard and keyboard simulation, which mobile operating systems don't allow.
 
 ### Is there a web version?
 

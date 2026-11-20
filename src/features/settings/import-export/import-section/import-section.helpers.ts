@@ -58,36 +58,6 @@ const applySettings = async (categories: ExportedCategories): Promise<void> => {
     }
 };
 
-const applyVoiceMode = async (categories: ExportedCategories): Promise<void> => {
-    const voiceMode = categories.voice_mode;
-    if (voiceMode == null) {
-        return;
-    }
-    await invoke('set_wake_word_enabled', { enabled: voiceMode.wake_word_enabled });
-    await invoke('set_wake_word_record', { word: voiceMode.wake_word_record });
-    await invoke('set_wake_word_command', { word: voiceMode.wake_word_command });
-    await invoke('set_wake_word_cancel', { word: voiceMode.wake_word_cancel });
-    await invoke('set_wake_word_validate', { word: voiceMode.wake_word_validate });
-    await invoke('set_wake_word_submit', { word: voiceMode.wake_word_submit });
-    await invoke('set_auto_enter_after_wake_word', { enabled: voiceMode.auto_enter_after_wake_word });
-    await invoke('set_silence_timeout_ms', { value: voiceMode.silence_timeout_ms });
-};
-
-const applySmartMic = async (categories: ExportedCategories): Promise<void> => {
-    const smartmic = categories.smartmic;
-    if (smartmic == null) {
-        return;
-    }
-    await invoke('set_smartmic_enabled', { enabled: smartmic.smartmic_enabled });
-    await invoke('set_smartmic_port', { port: smartmic.smartmic_port });
-    await invoke('set_smartmic_relay_enabled', { enabled: smartmic.smartmic_relay_enabled });
-    await invoke('set_smartmic_relay_url', { url: smartmic.smartmic_relay_url });
-    await invoke('set_smartmic_machine_id_enabled', { enabled: smartmic.smartmic_machine_id_enabled });
-    await invoke('set_smartmic_machine_id', { id: smartmic.smartmic_machine_id });
-    await invoke('set_smartmic_token_ttl_hours', { hours: smartmic.smartmic_token_ttl_hours });
-    await invoke('set_smartmic_bind_address', { address: smartmic.smartmic_bind_address });
-};
-
 const applyShortcuts = async (categories: ExportedCategories): Promise<void> => {
     const shortcuts = categories.shortcuts;
     if (shortcuts == null) {
@@ -98,7 +68,6 @@ const applyShortcuts = async (categories: ExportedCategories): Promise<void> => 
     await invoke('set_last_transcript_shortcut', {
         binding: shortcuts.last_transcript_shortcut,
     });
-    await invoke('set_command_shortcut', { binding: shortcuts.command_shortcut });
     await invoke('set_llm_mode_1_shortcut', {
         binding: shortcuts.llm_mode_1_shortcut,
     });
@@ -268,12 +237,6 @@ export const applySingleCategory = async (
             return 0;
         case 'shortcuts':
             await applyShortcuts(categories);
-            return 0;
-        case 'voice_mode':
-            await applyVoiceMode(categories);
-            return 0;
-        case 'smartmic':
-            await applySmartMic(categories);
             return 0;
         case 'formatting_rules':
             await applyFormattingRules(categories, strategies.formatting_rules ?? 'replace');
