@@ -1,5 +1,19 @@
 # Murmure
 
+> **This is a modified build of [Kieirra/murmure](https://github.com/Kieirra/murmure) 2.0.3.**
+> It adds a built-in AI cleanup engine (no Ollama needed), a liquid-glass look, a draggable overlay and smarter dictation (filler removal, self-corrections, automatic paragraphs). Command Mode, Voice Mode, Smart Mic and the auto-updater are removed. The installer is Windows only.
+>
+> ## Install (Windows)
+>
+> 1. Go to [Releases](../../releases/latest) and download `Murmure_x64-setup.exe`.
+> 2. Run it. Windows may show "Windows protected your PC" because the installer isn't signed. Click **More info**, then **Run anyway**.
+> 3. Murmure opens. Press **Ctrl+Space**, speak, and press **Ctrl+Space** again. Your words are typed wherever your cursor is.
+> 4. Optional, for AI cleanup: open **Prompt Mode** in the sidebar and click **Use built-in AI**. Murmure downloads its model once (about 3 GB, a few minutes). After that, **Ctrl+Shift+1** dictates and tidies the text: it drops "um"s, applies "no, actually…" corrections and fixes punctuation. Everything runs on your computer.
+>
+> To use your own AI server instead, click **Choose OpenAI-compatible** on that same screen and enter its address, API key and model.
+>
+> The AI model runs on your graphics card (4 GB of video memory recommended) or, more slowly, on your processor.
+
 A privacy-first, open-source speech-to-text application that runs entirely on your machine, powered by a neural network via NVIDIA’s [Parakeet TDT 0.6B v3 model](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) for fast, local transcription. Murmure turns your voice into text with no internet connection and zero data collection, and supports 25 European languages.
 
 Learn more on the [official website](https://murmure.al1x-ai.com/) | [Documentation](https://docs.murmure.app)
