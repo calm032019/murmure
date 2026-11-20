@@ -6,47 +6,39 @@ Prompt Mode (previously called LLM Connect) lets you post-process your transcrip
 
 ## Requirements
 
-You need access to one of:
+You need one of:
 
-- **Ollama** - Free, runs on your machine
-- **OpenAI-compatible** - LM Studio, Magnitude, llama.cpp, vLLM, or a cloud provider.
+- **Built-in AI** - Murmure runs the Qwen 3.5 (4B) model on your computer. Nothing else to install.
+- **OpenAI-compatible** - LM Studio, Magnitude, llama.cpp, vLLM, Ollama, or a cloud provider.
 
-## Setup with Ollama
+!!! note "Platform"
+    Built-in AI currently ships with the Windows build. On macOS and Linux, use the OpenAI-compatible option.
 
-### 1. Install Ollama
+## Setup with Built-in AI
 
-Download from [ollama.com](https://ollama.com) and install it, then make sure Ollama is running.
+Murmure includes its own AI engine (llama.cpp) and uses the Qwen 3.5 (4B) model. It runs on your graphics card when there is one, and on the CPU otherwise. Nothing leaves your computer.
 
-### 2. Open the Prompt Mode onboarding in Murmure
+### The model file
+
+The model is about 3 GB, too large to fit inside the installer. It is delivered in one of two ways:
+
+- **Installed with Murmure**: if the setup file comes with `Qwen_Qwen3.5-4B-Q4_K_M.gguf` in the same folder, the installer copies the model automatically.
+- **Downloaded once**: otherwise, Murmure downloads it the first time you set up Prompt Mode, and shows a progress bar. The file is checked against its known checksum before it is used.
+
+### Open the Prompt Mode onboarding in Murmure
 
 1. Open Murmure > **Extensions** > **Prompt Mode** (or Settings > Prompt Mode) and click **Enable Prompt Mode**
-2. Follow the 3-step onboarding wizard. First click **Choose Ollama**
-3. Install Ollama: Murmure verifies the connection to Ollama
-4. Choose the model: Murmure presents a list of recommended models with hardware requirements. Click a model card to download it, Murmure handles the download directly, showing a progress bar as the model is pulled from Ollama
-5. Once the model is chosen, click **Finish Setup** to complete the setup
+2. Click **Use built-in AI**
+3. Click the **Qwen 3.5 (4B)** card. If the model is not on your computer yet, Murmure downloads it
+4. Click **Finish Setup** to complete the setup
 
-**Model recommendations by hardware:**
+The engine starts the first time a prompt is used (a few seconds), then answers in about a second. It stops on its own after 10 minutes without use, and whenever Murmure closes.
 
-| Recommended VRAM | Recommended Model    | Notes                            |
-| ---------------- | -------------------- | -------------------------------- |
-| 4 GB             | `qwen3.5:4b`         | Lightweight, basic corrections   |
-| 7 GB             | `ministral-3:latest` | Strong reasoning (Ministral 3 8B)|
-| 8 GB             | `qwen3.5:latest`     | Best instruction following (Qwen 3.5 9B) |
+!!! note "Thinking is off"
+    Qwen 3.5 can "think" before answering. Murmure always turns this off: cleanup and formatting are rewriting tasks, and thinking only makes them slower.
 
 !!! warning "No GPU = Slow"
-    Without a GPU, LLM inference is very slow. For a practical experience, you need either a GPU with sufficient VRAM or a fast CPU with enough RAM.
-
-### Verify Ollama is Working
-
-```bash
-# Check Ollama is running
-ollama list
-
-# Check which model is loaded and GPU usage
-ollama ps
-```
-
-If `ollama ps` shows "0% GPU", inference will be CPU-only and slow.
+    Without a graphics card, the model runs on the CPU and each prompt takes noticeably longer.
 
 ## Setup with OpenAI-compatible
 
@@ -67,10 +59,10 @@ Murmure supports any OpenAI-compatible API: LM Studio, Magnitude, llama.cpp, vLL
 !!! note "Privacy"
     Murmure shows a privacy warning for this option only when the URL is not local or private (anything other than `localhost`, `127.0.0.1`, `10.x`, `192.168.x` or `172.16` to `172.31.x`). A local OpenAI-compatible server stays private.
 
-!!! note "Ollama on another machine"
-    If you host Ollama on another machine, use the **Ollama** option with a URL such as `http://your-server:11434/api`, and make sure `OLLAMA_HOST=0.0.0.0` is set on the server so it accepts network connections.
+!!! note "Ollama"
+    Ollama is no longer needed. If you already use it, you can still connect it as an OpenAI-compatible server with the URL `http://localhost:11434/v1`.
 
-You can mix providers across your prompts - for example, Prompt 1 using Ollama and Prompt 2 using OpenAI-compatible.
+You can mix providers across your prompts - for example, Prompt 1 using Built-in AI and Prompt 2 using OpenAI-compatible.
 
 ![Prompt Mode advanced configuration](../assets/llm-connect-advanced.png)
 
@@ -78,7 +70,7 @@ You can mix providers across your prompts - for example, Prompt 1 using Ollama a
 
 Prompt Mode supports multiple saved prompts, up to 4. Each prompt can have its own:
 
-- Provider (Ollama or OpenAI-compatible)
+- Provider (Built-in AI or OpenAI-compatible)
 - Model
 - System prompt
 - User prompt (with `{{text}}` placeholder for the transcription)

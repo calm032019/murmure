@@ -1,4 +1,3 @@
-import { AudioVisualizer } from '@/features/home/audio-visualizer/audio-visualizer';
 import { useLLMState } from '@/features/home/audio-visualizer/hooks/use-llm-state';
 import { useStreamingState } from './streaming-text/use-streaming-state';
 import { StreamingText } from './streaming-text/streaming-text';
@@ -12,12 +11,16 @@ import { useLlmPromptFlash } from './mode-flash/hooks/use-llm-prompt-flash';
 import { ModeFlash } from './mode-flash/mode-flash';
 import { CancelButton } from './cancel-button';
 import { useOverlayInputRegion } from './use-overlay-input-region';
+import { useOverlayDrag } from './use-overlay-drag';
 import { useTransformProcessing } from './use-transform-processing';
 import { ResultPanel } from './result-panel/result-panel';
+import { LiquidVisualizer } from './liquid-visualizer/liquid-visualizer';
+import { useGlassStyle } from '@/components/hooks/use-glass-style';
 import { useResultPanel } from './result-panel/hooks/use-result-panel';
 
 export const Overlay = () => {
     const { overlaySize, overlayPosition, streamingTextSettings, resultPanelDurationSecs } = useOverlayConfig();
+    const glassStyle = useGlassStyle();
     const resultPanel = useResultPanel(resultPanelDurationSecs, overlayPosition !== undefined);
     const recordingMode = useRecordingMode();
     const error = useOverlayError();
@@ -27,6 +30,7 @@ export const Overlay = () => {
     const { isProcessing } = useLLMState();
     const { isTransformProcessing } = useTransformProcessing();
     const setRoot = useOverlayInputRegion();
+    const dragHandlers = useOverlayDrag();
     const showPromptName = promptName != null && !hasStreamingText;
 
     const renderContent = () => {
@@ -42,9 +46,9 @@ export const Overlay = () => {
                         'items-center',
                         'justify-center',
                         'h-9',
-                        'px-2',
-                        'rounded-lg',
-                        'bg-black',
+                        'px-3',
+                        'rounded-full',
+                        'glass-pill',
                         'animate-in',
                         'fade-in',
                         'zoom-in',
@@ -82,26 +86,21 @@ export const Overlay = () => {
 
         const visualizer = (
             <div className="relative w-fit">
-                <CancelButton size={overlaySize} />
                 <div
                     data-interactive
-                    className={clsx(
-                        'overflow-hidden',
-                        'flex',
-                        'items-center',
-                        'justify-center',
-                        'bg-black',
-                        VISUALIZER_CONFIG[overlaySize].className
-                    )}
+                    {...dragHandlers}
+                    className={clsx('cursor-grab', VISUALIZER_CONFIG[overlaySize].className)}
                 >
-                    <AudioVisualizer
-                        bars={VISUALIZER_CONFIG[overlaySize].bars}
-                        rows={9}
-                        audioPixelWidth={VISUALIZER_CONFIG[overlaySize].pixelWidth}
-                        audioPixelHeight={VISUALIZER_CONFIG[overlaySize].pixelHeight}
+                    <LiquidVisualizer
+                        blobs={VISUALIZER_CONFIG[overlaySize].blobs}
+                        glassStyle={glassStyle}
                         colorScheme={isTransformProcessing ? 'llm' : recordingMode}
                         isProcessing={isProcessing || isTransformProcessing}
                     />
+                </div>
+                {/* Sized to the resting capsule so the button sits on its corner. */}
+                <div className="pointer-events-none absolute inset-x-0 top-1/4 bottom-1/4">
+                    <CancelButton size={overlaySize} />
                 </div>
             </div>
         );
@@ -115,8 +114,8 @@ export const Overlay = () => {
                             'max-w-[160px]',
                             'truncate',
                             'text-center',
-                            'rounded',
-                            'bg-black',
+                            'rounded-full',
+                            'glass-pill',
                             'px-2',
                             'py-1',
                             'text-[10px]',
@@ -132,7 +131,7 @@ export const Overlay = () => {
             }
             if (hasStreamingText) {
                 return (
-                    <div data-interactive className={clsx('w-fit', 'rounded-lg', 'bg-black')}>
+                    <div data-interactive className={clsx('w-fit', 'rounded-2xl', 'glass-pill')}>
                         <StreamingText
                             frozenSegments={frozenSegments}
                             provisional={provisional}

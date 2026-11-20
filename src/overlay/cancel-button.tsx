@@ -14,10 +14,11 @@ export const CancelButton = ({ size }: { size: OverlaySize }) => {
         <button
             type="button"
             data-interactive
-            aria-label="Annuler la dictée"
-            title="Annuler la dictée"
+            aria-label="Cancel dictation"
+            title="Cancel dictation"
             onClick={() => invoke('cancel_recording')}
             className={clsx(
+                'pointer-events-auto',
                 'absolute',
                 '-top-2',
                 '-right-2',
@@ -27,9 +28,9 @@ export const CancelButton = ({ size }: { size: OverlaySize }) => {
                 'items-center',
                 'justify-center',
                 'rounded-full',
-                'bg-black',
-                'hover:bg-neutral-700',
-                'text-neutral-300',
+                'glass-pill',
+                'hover:brightness-150',
+                'text-neutral-200',
                 'hover:text-white',
                 'transition-all',
                 'duration-150',

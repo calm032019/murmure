@@ -80,7 +80,7 @@ export const SortableTab = ({
                         <MoreVertical className="w-4 h-4" />
                     </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-40 bg-background border-border text-foreground">
+                <DropdownMenuContent align="start" className="w-40 bg-popover border-border text-foreground">
                     <DropdownMenuItem
                         className="focus:bg-card focus:text-foreground"
                         onClick={(e) => {

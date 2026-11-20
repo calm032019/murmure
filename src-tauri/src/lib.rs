@@ -1,5 +1,6 @@
 #![allow(clippy::module_inception)]
 
+mod appearance;
 mod audio;
 pub mod cli;
 mod clipboard;
@@ -341,6 +342,7 @@ pub fn run() {
 
             setup_tray(app.handle())?;
 
+            appearance::apply_glass_style(app.handle(), &s.glass_style);
             overlay::overlay::warmup_overlay(app.handle());
             if s.overlay_mode.as_str() == "always" {
                 overlay::overlay::show_recording_overlay(app.handle());
@@ -513,6 +515,8 @@ pub fn run() {
             set_log_level,
             set_keep_recordings,
             set_remove_hesitations,
+            set_voice_commands,
+            set_self_corrections,
             get_recordings_dir,
             open_accessibility_settings,
             check_accessibility_permission,
@@ -571,6 +575,9 @@ pub fn run() {
             set_result_panel_mode,
             set_result_panel_duration,
             set_overlay_input_region,
+            start_overlay_drag,
+            set_glass_style,
+            reset_overlay_custom_position,
             flash_text_in_overlay,
             hide_overlay_if_idle,
             is_transform_processing
@@ -597,6 +604,7 @@ pub fn run() {
                 crate::utils::enigo_session::shutdown(app_handle);
                 crate::smartmic::input_bridge::shutdown();
                 audio::output_volume::restore_pending(app_handle);
+                llm::engine::shutdown();
             }
         });
 }

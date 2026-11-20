@@ -18,12 +18,15 @@ export interface SystemSettings {
     show_in_dock: boolean;
     streaming_preview: boolean;
     overlay_size: string;
+    glass_style?: string;
     streaming_text_width: number;
     streaming_font_size: number;
     streaming_max_lines: number;
     result_panel_mode: string;
     result_panel_duration_secs: number;
     remove_hesitations: boolean;
+    voice_commands: boolean;
+    self_corrections: boolean;
     wayland_notice_dismissed: boolean;
     wayland_clipboard_fallback_dismissed: boolean;
 }

@@ -25,7 +25,7 @@ export const LLMEnableAction = ({ icon, label, needsSetup, onEnable, testId, col
             hintIcon={Server}
             hint={
                 needsSetup
-                    ? t('Requires Ollama (free) or your own server. Guided setup in the next step.')
+                    ? t('Uses the built-in AI or your own server. Guided setup in the next step.')
                     : t('Uses the server you already set up.')
             }
         />

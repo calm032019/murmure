@@ -80,43 +80,72 @@
     --sidebar-ring: oklch(0.707 0.022 261.325);
 }
 
+/* Liquid glass: every surface is a translucent tint over the window's
+   acrylic backdrop; depth comes from the glass material below, not opacity. */
 .dark {
     color-scheme: dark;
-    --background: oklch(0.21 0.006 285.885); /* zinc-900 */
-    --foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
-    --card: oklch(0.274 0.006 286.033); /* zinc-800 */
-    --card-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
-    --surface: #1c1c1f;
-    --surface-border: #2d2d32;
-    --surface-header: #161619;
-    --field: #111113;
-    --popover: oklch(0.274 0.006 286.033); /* zinc-800 */
-    --popover-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
-    --primary: oklch(0.92 0.004 286.32); /* zinc-200 */
-    --primary-foreground: oklch(0.21 0.006 285.885); /* zinc-900 */
-    --secondary: oklch(0.274 0.006 286.033); /* zinc-800 */
-    --secondary-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
-    --muted: oklch(0.274 0.006 286.033); /* zinc-800 */
-    --muted-foreground: oklch(0.705 0.015 286.067); /* zinc-400 */
-    --accent: oklch(0.372 0.013 285.805); /* zinc-700 */
-    --accent-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
+    --background: rgb(9 12 20 / 0.5); /* window canvas tint, painted once on body */
+    --foreground: oklch(0.975 0.002 260);
+    --card: rgb(255 255 255 / 0.06);
+    --card-foreground: oklch(0.975 0.002 260);
+    --surface: rgb(255 255 255 / 0.055);
+    --surface-border: rgb(255 255 255 / 0.11);
+    --surface-header: rgb(255 255 255 / 0.035);
+    --field: rgb(0 0 0 / 0.24);
+    --popover: rgb(22 26 38 / 0.72);
+    --popover-foreground: oklch(0.975 0.002 260);
+    --primary: rgb(255 255 255 / 0.9);
+    --primary-foreground: oklch(0.2 0.02 260);
+    --secondary: rgb(255 255 255 / 0.08);
+    --secondary-foreground: oklch(0.975 0.002 260);
+    --muted: rgb(255 255 255 / 0.06);
+    --muted-foreground: rgb(225 232 245 / 0.62);
+    --accent: rgb(255 255 255 / 0.1);
+    --accent-foreground: oklch(0.975 0.002 260);
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(0.372 0.013 285.805); /* zinc-700 */
-    --input: oklch(0.372 0.013 285.805); /* zinc-700 */
-    --ring: oklch(0.552 0.016 285.938); /* zinc-500 */
+    --border: rgb(255 255 255 / 0.1);
+    --input: rgb(255 255 255 / 0.14);
+    --ring: rgb(125 211 252 / 0.6);
+    --glass-rim: rgb(255 255 255 / 0.2);
+    --glass-sheen: linear-gradient(
+        150deg,
+        rgb(255 255 255 / 0.1) 0%,
+        rgb(255 255 255 / 0.025) 35%,
+        rgb(255 255 255 / 0) 60%,
+        rgb(255 255 255 / 0.04) 100%
+    );
     --chart-1: oklch(0.488 0.243 264.376);
     --chart-2: oklch(0.696 0.17 162.48);
     --chart-3: oklch(0.769 0.188 70.08);
     --chart-4: oklch(0.627 0.265 303.9);
     --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.21 0.006 285.885); /* zinc-900 */
-    --sidebar-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
+    --sidebar: rgb(255 255 255 / 0.035);
+    --sidebar-foreground: oklch(0.975 0.002 260);
     --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
-    --sidebar-accent: oklch(0.274 0.006 286.033); /* zinc-800 */
-    --sidebar-accent-foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
-    --sidebar-border: oklch(0.372 0.013 285.805); /* zinc-700 */
-    --sidebar-ring: oklch(0.552 0.016 285.938); /* zinc-500 */
+    --sidebar-primary-foreground: oklch(0.975 0.002 260);
+    --sidebar-accent: rgb(255 255 255 / 0.1);
+    --sidebar-accent-foreground: oklch(0.975 0.002 260);
+    --sidebar-border: rgb(255 255 255 / 0.09);
+    --sidebar-ring: rgb(125 211 252 / 0.6);
+}
+
+/* Clear glass: Windows no longer blurs the desktop behind the window, so the
+   canvas dims it more and panels lean on their rims instead of their fill. */
+.dark[data-glass='clear'],
+[data-glass='clear'] .dark {
+    --background: rgb(7 9 15 / 0.66);
+    --surface: rgb(255 255 255 / 0.04);
+    --surface-header: rgb(255 255 255 / 0.025);
+    --card: rgb(255 255 255 / 0.045);
+    --sidebar: rgb(255 255 255 / 0.025);
+    --surface-border: rgb(255 255 255 / 0.14);
+    --glass-rim: rgb(255 255 255 / 0.28);
+    --glass-blur: 1.5px;
+}
+
+/* The overlay page has no .dark class; its text panels read this directly. */
+[data-glass='clear'] {
+    --pill-tint: rgb(12 16 26 / 0.5);
 }
 
 @layer base {
@@ -125,6 +154,73 @@
     }
     body {
         @apply bg-background text-foreground;
+    }
+    .dark ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    .dark ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background: rgb(255 255 255 / 0.18) padding-box;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: rgb(255 255 255 / 0.3) padding-box;
+    }
+}
+
+/* Glass material. Panels sit in the page; "strong" glass floats above it
+   (menus, dialogs) and needs more blur and opacity to stay readable. */
+@utility glass {
+    background-image: var(--glass-sheen);
+    backdrop-filter: blur(var(--glass-blur, 24px)) saturate(170%);
+    box-shadow:
+        inset 0 1px 0 var(--glass-rim),
+        inset 0 -1px 0 rgb(0 0 0 / 0.2),
+        0 12px 32px -14px rgb(0 0 0 / 0.55);
+}
+
+@utility glass-strong {
+    background-image: var(--glass-sheen);
+    backdrop-filter: blur(36px) saturate(180%);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.24),
+        inset 0 -1px 0 rgb(0 0 0 / 0.25),
+        0 24px 60px -18px rgb(0 0 0 / 0.7);
+}
+
+/* Selected nav item / segmented control: a raised glass capsule. */
+@utility glass-capsule {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.07));
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.28),
+        inset 0 0 0 1px rgb(255 255 255 / 0.08),
+        0 6px 16px -8px rgb(0 0 0 / 0.6);
+}
+
+/* Overlay glass. The overlay window floats over arbitrary apps with no
+   blur behind it, so it carries its own tint and a bright rim for contrast. */
+@utility glass-pill {
+    background:
+        linear-gradient(160deg, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0.04) 45%, rgb(255 255 255 / 0.08) 100%),
+        var(--pill-tint, rgb(14 18 28 / 0.72));
+    border: 1px solid rgb(255 255 255 / 0.22);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.35),
+        inset 0 -1px 2px rgb(0 0 0 / 0.35),
+        0 8px 22px -6px rgb(0 0 0 / 0.55);
+}
+
+@layer components {
+    /* Token surfaces become glass panels without touching every component. */
+    .dark :is(.bg-surface, .bg-card) {
+        @apply glass;
+    }
+    .dark :is(.bg-popover, [role='dialog']) {
+        @apply glass-strong;
     }
 }
 

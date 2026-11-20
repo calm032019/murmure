@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from '@tanstack/react-router';
+import { Outlet } from '@tanstack/react-router';
 import { SidebarProvider, SidebarInset } from '../../components/sidebar';
 import { AppSidebar } from './app-sidebar/app-sidebar';
 import clsx from 'clsx';
@@ -12,11 +12,14 @@ import { ConfigImportedListener } from './listeners/config-imported-listener';
 import { WaylandListener } from './listeners/wayland-listener';
 import { VoiceModeToggleListener } from './listeners/voice-mode-toggle-listener';
 import { TrayMenuI18nListener } from './listeners/tray-menu-i18n-listener';
+import { AmbientBackdrop } from './ambient-backdrop/ambient-backdrop';
+import { useGlassStyle } from '@/components/hooks/use-glass-style';
 
 export const Layout = () => {
-    const { pathname } = useLocation();
+    useGlassStyle();
     return (
-        <SidebarProvider open={true} onOpenChange={() => {}} className="bg-background dark">
+        <SidebarProvider open={true} onOpenChange={() => {}} className="bg-transparent dark">
+            <AmbientBackdrop />
             <AccessibilityListener />
             <RecordingErrorListener />
             <LlmErrorListener />
@@ -28,17 +31,8 @@ export const Layout = () => {
             <TrayMenuI18nListener />
             <AppSidebar />
             <SidebarInset
-                className={clsx('bg-background', 'text-white', 'pr-8', 'pt-8', 'flex', 'items-center', 'pl-[17.2rem]')}
+                className={clsx('bg-transparent', 'text-white', 'pr-8', 'pt-8', 'flex', 'items-center', 'pl-[17.2rem]')}
             >
-                {pathname === '/' && (
-                    <div
-                        aria-hidden="true"
-                        className={clsx(
-                            'pointer-events-none fixed inset-0',
-                            'bg-[linear-gradient(to_bottom,#243f54_0%,#191b20_52%,#18191c_57%,var(--background)_62%)]'
-                        )}
-                    />
-                )}
                 <div className="relative max-w-[800px] w-full pb-12" data-testid="murmure-content">
                     <Outlet />
                 </div>

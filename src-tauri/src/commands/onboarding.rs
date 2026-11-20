@@ -3,7 +3,16 @@ use tauri::{command, AppHandle};
 
 #[command]
 pub fn get_onboarding_state(app: AppHandle) -> Result<OnboardingState, String> {
-    let s = settings::load_settings(&app);
+    let mut s = settings::load_settings(&app);
+    // Words can arrive without set_dictionary (Import button, CLI import), so
+    // the dictionary itself is the source of truth for this step.
+    let has_words = crate::dictionary::load(&app)
+        .map(|words| !words.is_empty())
+        .unwrap_or(false);
+    if !s.onboarding.added_dictionary_word && has_words {
+        s.onboarding.added_dictionary_word = true;
+        settings::save_settings(&app, &s)?;
+    }
     Ok(s.onboarding)
 }
 

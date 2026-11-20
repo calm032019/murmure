@@ -22,8 +22,7 @@ type WavWriterType = WavWriter<BufWriter<File>>;
 type SharedWriter = Arc<Mutex<Option<WavWriterType>>>;
 
 // The audible part of start_record.mp3 ends at 180 ms, and the sound thread plays its
-// warmup before it. Capture starts after both so the beep is neither picked up by the
-// microphone nor lowered by the output ducking.
+// warmup before it. Output ducking waits for both so the beep is not lowered.
 const START_BEEP_DURATION: std::time::Duration =
     std::time::Duration::from_millis(250).saturating_add(sound::STREAM_WARMUP_DURATION);
 
@@ -140,14 +139,18 @@ impl AudioRecorder {
     pub fn start(&mut self, play_sound: bool) -> Result<()> {
         if let Some(stream) = &self.stream.0 {
             let settings = crate::settings::load_settings(&self.app_handle);
+            // Capture before the beep: people start talking straight away, and
+            // waiting for the beep to finish cut off short first words ("I").
+            // The beep itself is a tone the model does not transcribe.
+            stream.play().context("Failed to start stream")?;
+            self.start_time = Some(std::time::Instant::now());
             if play_sound {
                 sound::play_sound(&self.app_handle, sound::Sound::StartRecording);
                 if settings.sound_enabled {
+                    // Still wait before ducking so the beep plays at full volume.
                     std::thread::sleep(START_BEEP_DURATION);
                 }
             }
-            stream.play().context("Failed to start stream")?;
-            self.start_time = Some(std::time::Instant::now());
             if settings.lower_output_while_recording {
                 self.lowered_output = crate::audio::output_volume::lower_and_persist(
                     &self.app_handle,

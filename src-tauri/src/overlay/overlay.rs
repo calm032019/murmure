@@ -201,6 +201,20 @@ fn is_mouse_within_monitor(
         && mouse_y < (monitor_y + monitor_height as i32)
 }
 
+// A dragged position is dropped once its monitor is gone (unplugged,
+// rearranged), so the overlay never reappears off-screen.
+fn is_origin_on_screen(app_handle: &AppHandle, (x, y): (i32, i32), w: u32, h: u32) -> bool {
+    let center = (x + w as i32 / 2, y + h as i32 / 2);
+    app_handle
+        .available_monitors()
+        .map(|monitors| {
+            monitors
+                .iter()
+                .any(|m| is_mouse_within_monitor(center, m.position(), m.size()))
+        })
+        .unwrap_or(false)
+}
+
 fn calculate_overlay_geometry(app_handle: &AppHandle) -> Option<(i32, i32, u32, u32)> {
     if let Some(monitor) = get_active_monitor(app_handle) {
         let monitor_size = monitor.size();
@@ -239,12 +253,20 @@ fn calculate_overlay_geometry(app_handle: &AppHandle) -> Option<(i32, i32, u32, 
         let overlay_w = OVERLAY_WIDTH.max(s.streaming_text_width as f64) * scale;
         let overlay_h = OVERLAY_HEIGHT * scale;
 
+        let (w, h) = (overlay_w as u32, overlay_h as u32);
+        if let Some((x, y)) = s
+            .overlay_custom_position
+            .filter(|&origin| is_origin_on_screen(app_handle, origin, w, h))
+        {
+            return Some((x, y, w, h));
+        }
+
         let x = work_x + (work_w - overlay_w) / 2.0;
         let y = match s.overlay_position.as_str() {
             "top" => work_y + work_h * OVERLAY_TOP_OFFSET_PCT,
             _ => work_y + work_h * (1.0 - OVERLAY_BOTTOM_OFFSET_PCT) - overlay_h,
         };
-        return Some((x as i32, y as i32, overlay_w as u32, overlay_h as u32));
+        return Some((x as i32, y as i32, w, h));
     }
     None
 }

@@ -17,14 +17,18 @@ pub fn set_llm_connect_settings(
     Ok(())
 }
 
+// `url` is kept for frontend compatibility; the local provider is now the
+// built-in engine, which needs no address.
 #[command]
-pub async fn test_llm_connection(url: String) -> Result<bool, String> {
-    llm::test_ollama_connection(url).await
+pub async fn test_llm_connection(app: AppHandle, url: String) -> Result<bool, String> {
+    let _ = url;
+    llm::test_local_engine(&app).await
 }
 
 #[command]
-pub async fn fetch_ollama_models(url: String) -> Result<Vec<OllamaModel>, String> {
-    llm::fetch_ollama_models(url).await
+pub async fn fetch_ollama_models(app: AppHandle, url: String) -> Result<Vec<OllamaModel>, String> {
+    let _ = url;
+    llm::fetch_local_models(&app).await
 }
 
 #[command]
@@ -56,5 +60,6 @@ pub fn get_remote_api_key_masked() -> String {
 
 #[command]
 pub async fn pull_ollama_model(app: AppHandle, url: String, model: String) -> Result<(), String> {
-    llm::llm::pull_ollama_model(app, url, model).await
+    let _ = (url, model);
+    llm::engine::download_model(app).await
 }

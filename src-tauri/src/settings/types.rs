@@ -41,6 +41,9 @@ pub struct AppSettings {
     pub record_mode: String,      // "push_to_talk" | "toggle_to_talk"
     pub overlay_mode: String,     // "hidden" | "recording" | "always"
     pub overlay_position: String, // "top" | "bottom"
+    // Physical top-left of the overlay window after the user dragged it.
+    // Overrides `overlay_position` placement until reset.
+    pub overlay_custom_position: Option<(i32, i32)>,
     pub api_enabled: bool,
     pub api_port: u16,
     pub copy_to_clipboard: bool, // Keeps transcription in clipboard after recording finishes
@@ -79,12 +82,15 @@ pub struct AppSettings {
     pub smartmic_bind_address: Option<String>, // None means auto-detect
     pub streaming_preview: bool,
     pub overlay_size: String, // "small" | "medium" | "large"
+    pub glass_style: String,  // "clear" | "frosted"
     pub streaming_text_width: u32,
     pub streaming_font_size: u32,
     pub streaming_max_lines: u32,
     pub result_panel_mode: String, // "off" | "command" | "command_llm" | "all"
     pub result_panel_duration_secs: u64,
     pub remove_hesitations: bool,
+    pub voice_commands: bool,
+    pub self_corrections: bool,
     // Linux only. Persists the user's dismissal of `WaylandModeNotice`
     // so the onboarding banner does not reappear on next launch.
     pub wayland_notice_dismissed: bool,
@@ -144,6 +150,7 @@ impl Default for AppSettings {
                 }
             },
             overlay_position: "bottom".to_string(),
+            overlay_custom_position: None,
             api_enabled: false,
             api_port: 4800,
             // Default to true on Wayland so transcriptions remain accessible
@@ -192,12 +199,15 @@ impl Default for AppSettings {
             smartmic_bind_address: None,
             streaming_preview: true,
             overlay_size: "small".to_string(),
+            glass_style: "frosted".to_string(),
             streaming_text_width: 450,
             streaming_font_size: 11,
             streaming_max_lines: 5,
             result_panel_mode: "command".to_string(),
             result_panel_duration_secs: 5,
-            remove_hesitations: false,
+            remove_hesitations: true,
+            voice_commands: true,
+            self_corrections: true,
             wayland_notice_dismissed: false,
             wayland_clipboard_fallback_dismissed: false,
         }

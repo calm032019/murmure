@@ -7,7 +7,7 @@ Solutions aux problemes les plus courants, basees sur les retours utilisateurs.
 1. **[Transcription dans la mauvaise langue](transcription.md)** - Murmure transcrit en anglais au lieu du francais
 2. **[Le texte n'apparait pas](text-insertion.md)** - La transcription fonctionne mais le texte n'est pas insere
 3. **[Les raccourcis ne fonctionnent pas](shortcuts.md)** - Le raccourci d'enregistrement n'a aucun effet
-4. **[Erreurs du Mode Prompt](llm-connect.md)** - Erreurs Ollama 500, reponses lentes
+4. **[Erreurs du Mode Prompt](llm-connect.md)** - telechargement du modele, reponses lentes, erreurs du moteur
 
 ## Corrections rapides
 
@@ -18,7 +18,7 @@ Solutions aux problemes les plus courants, basees sur les retours utilisateurs.
 | Conflit raccourci (macOS)     | Changer pour Ctrl+Option+M                                                             |
 | Raccourci inactif (Linux)     | Voir [Configurer les raccourcis sous Linux](../configure-shortcuts-on-linux.fr.md)     |
 | Erreur MSVCP140.dll (Windows) | Installer [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) |
-| Erreur Ollama 500             | Utiliser un modele plus petit (qwen3.5:4b)                                             |
+| "The AI model is not installed yet" | Telecharger le modele dans Mode Prompt > Configuration avancée                  |
 | Parametres corrompus          | Supprimer settings.json et redemarrer                                                  |
 
 ## Comment obtenir les logs

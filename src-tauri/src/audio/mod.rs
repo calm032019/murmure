@@ -1,11 +1,14 @@
 pub mod audio;
+pub mod chunk_seam;
 pub mod chunking;
 pub mod clean_recording;
 pub mod helpers;
 pub mod microphone;
 pub mod output_volume;
+pub mod pause_breaks;
 pub mod pipeline;
 pub mod recorder;
+pub mod smart_dictation;
 pub mod sound;
 pub mod streaming;
 pub mod types;

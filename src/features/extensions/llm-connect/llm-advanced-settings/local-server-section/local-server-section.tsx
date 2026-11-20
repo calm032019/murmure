@@ -1,7 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { Typography } from '@/components/typography';
 import { SettingsUI } from '@/components/settings-ui';
-import { Input } from '@/components/input';
 import { Page } from '@/components/page';
 import { Server } from 'lucide-react';
 import { ConnectionStatus } from '../../hooks/use-llm-connect';
@@ -19,9 +18,6 @@ interface LocalServerSectionProps {
 }
 
 export const LocalServerSection = ({
-    localUrl,
-    onLocalUrlChange,
-    onLocalUrlBlur,
     isTestingLocal,
     localConnectionStatus,
     onTestLocal,
@@ -31,19 +27,13 @@ export const LocalServerSection = ({
     const { t } = useTranslation();
 
     return (
-        <SettingsUI.Section title={t('Ollama')} icon={Server}>
+        <SettingsUI.Section title={t('Built-in AI')} icon={Server}>
             <SettingsUI.Item>
                 <SettingsUI.Description>
-                    <Typography.Title>{t('Server URL')}</Typography.Title>
+                    <Typography.Title>{t('Engine')}</Typography.Title>
+                    <Typography.Paragraph>{t('Qwen 3.5 (4B), running on this computer')}</Typography.Paragraph>
                 </SettingsUI.Description>
                 <div className="flex items-center gap-3">
-                    <Input
-                        value={localUrl}
-                        onChange={(e) => onLocalUrlChange(e.target.value)}
-                        onBlur={onLocalUrlBlur}
-                        className="w-70"
-                        placeholder="http://localhost:11434/api"
-                    />
                     <ConnectionButton isTesting={isTestingLocal} status={localConnectionStatus} onClick={onTestLocal} />
                 </div>
             </SettingsUI.Item>
@@ -55,7 +45,7 @@ export const LocalServerSection = ({
                             <Typography.Title>{t('Models')}</Typography.Title>
                         </SettingsUI.Description>
                         <Page.SecondaryButton onClick={onInstallModel} size="sm">
-                            {t('Install another model')}
+                            {t('Download model')}
                         </Page.SecondaryButton>
                     </SettingsUI.Item>
                 </>

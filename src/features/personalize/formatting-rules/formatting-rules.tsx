@@ -6,7 +6,7 @@ import { Switch } from '@/components/switch';
 import { Slider } from '@/components/slider';
 import { useTranslation } from '@/i18n';
 import { useFormattingRules } from './hooks/use-formatting-rules';
-import { useRemoveHesitations } from './hooks/use-remove-hesitations';
+import { useRemoveHesitations, useSelfCorrections, useVoiceCommands } from './hooks/use-remove-hesitations';
 import { RuleCard } from '../../../components/rule-card';
 import { AddRuleSection } from '../../../components/add-rule-section';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../components/select';
@@ -67,6 +67,8 @@ export const FormattingRules = () => {
     const { settings, isLoading, updateBuiltInOption, addRule, updateRule, deleteRule, duplicateRule, reorderRules } =
         useFormattingRules();
     const { removeHesitations, setRemoveHesitations } = useRemoveHesitations();
+    const { voiceCommands, setVoiceCommands } = useVoiceCommands();
+    const { selfCorrections, setSelfCorrections } = useSelfCorrections();
 
     const shortTextThreshold = settings.built_in.short_text_correction;
     const [activeId, setActiveId] = useState<string | null>(null);
@@ -281,7 +283,9 @@ export const FormattingRules = () => {
                                 <SettingsUI.Description className="w-150">
                                     <Typography.Title>{t('Remove hesitation sounds')}</Typography.Title>
                                     <Typography.Paragraph>
-                                        {t('Removes sounds like "euh", "um" and "hmm" from transcriptions.')}
+                                        {t(
+                                            'Removes sounds like "um", "uh" and "erm" and tidies the punctuation around them.'
+                                        )}
                                         <br />
                                         <span className="text-xs italic text-muted-foreground">
                                             {t('Example: "I um think so" → "I think so"')}
@@ -292,6 +296,48 @@ export const FormattingRules = () => {
                                     checked={removeHesitations}
                                     onCheckedChange={setRemoveHesitations}
                                     data-testid="option-remove-hesitations"
+                                />
+                            </SettingsUI.Item>
+                            <SettingsUI.Separator />
+                            <SettingsUI.Item>
+                                <SettingsUI.Description className="w-150">
+                                    <Typography.Title>{t('Fix self-corrections')}</Typography.Title>
+                                    <Typography.Paragraph>
+                                        {t(
+                                            'When you correct yourself with "actually", "I mean", "no" or "scratch that", only the corrected version is kept.'
+                                        )}
+                                        <br />
+                                        <span className="text-xs italic text-muted-foreground">
+                                            {t('Example: "I want an apple, actually I want a pear" → "I want a pear"')}
+                                        </span>
+                                    </Typography.Paragraph>
+                                </SettingsUI.Description>
+                                <Switch
+                                    checked={selfCorrections}
+                                    onCheckedChange={setSelfCorrections}
+                                    data-testid="option-self-corrections"
+                                />
+                            </SettingsUI.Item>
+                            <SettingsUI.Separator />
+                            <SettingsUI.Item>
+                                <SettingsUI.Description className="w-150">
+                                    <Typography.Title>{t('Smart paragraphs')}</Typography.Title>
+                                    <Typography.Paragraph>
+                                        {t(
+                                            'Starts a new paragraph when you change subject ("Also", "By the way", "Moving on"...) or pause for about two seconds after a sentence. You can still say "new line" or "new paragraph".'
+                                        )}
+                                        <br />
+                                        <span className="text-xs italic text-muted-foreground">
+                                            {t(
+                                                'Example: "...looks fine. Also, can you send the quote?" → "...looks fine.⏎⏎Also, can you send the quote?"'
+                                            )}
+                                        </span>
+                                    </Typography.Paragraph>
+                                </SettingsUI.Description>
+                                <Switch
+                                    checked={voiceCommands}
+                                    onCheckedChange={setVoiceCommands}
+                                    data-testid="option-voice-commands"
                                 />
                             </SettingsUI.Item>
                         </SettingsUI.Container>

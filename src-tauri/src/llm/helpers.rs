@@ -100,6 +100,10 @@ pub fn load_llm_connect_settings(app: &AppHandle) -> LLMConnectSettings {
         needs_save = true;
     }
 
+    if migrate_local_models_to_builtin(&mut settings) {
+        needs_save = true;
+    }
+
     if needs_save {
         let _ = save_llm_connect_settings(app, &settings);
     }
@@ -116,6 +120,28 @@ pub fn migrate_missing_keys(
     let enabled_migrated =
         migrate_enabled(settings, has_key("/enabled"), has_key("/command/enabled"));
     command_migrated || enabled_migrated
+}
+
+/// The local provider is now the built-in engine, which runs one model.
+/// Rewrites Ollama model names left over from earlier versions.
+pub fn migrate_local_models_to_builtin(settings: &mut LLMConnectSettings) -> bool {
+    let builtin = crate::llm::engine::MODEL_ID;
+    let mut changed = false;
+    for mode in &mut settings.modes {
+        if mode.provider == LLMProvider::Local && mode.model != builtin {
+            mode.model = builtin.to_string();
+            changed = true;
+        }
+    }
+    let command = &mut settings.command;
+    if command.provider == LLMProvider::Local
+        && !command.model.is_empty()
+        && command.model != builtin
+    {
+        command.model = builtin.to_string();
+        changed = true;
+    }
+    changed
 }
 
 fn migrate_command(settings: &mut LLMConnectSettings, has_command_key: bool) -> bool {

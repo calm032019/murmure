@@ -57,10 +57,10 @@ Deux endpoints transcrivent l'audio, envoient le texte à un modèle de langage 
 Avant de les utiliser, retenez les points suivants :
 
 - Le [Mode Prompt](llm-connect.md) doit être activé dans **Extensions** > **Mode Prompt**. S'il est désactivé, les deux endpoints POST renvoient une erreur `409`.
-- L'API utilise la connexion déjà configurée dans Murmure. L'URL d'Ollama, l'URL d'OpenAI compatible et la clé d'API ne sont jamais envoyées dans une requête.
+- L'API utilise la connexion déjà configurée dans Murmure. L'URL d'OpenAI compatible et la clé d'API ne sont jamais envoyées dans une requête.
 - Un appel API n'a aucun effet dans Murmure. Il n'y a ni overlay, ni son, ni notification, ni carte de résultat. Rien n'est ajouté à l'historique ni aux statistiques, rien n'est collé ni copié, et le prompt actif et vos réglages ne changent pas.
 - Les requêtes sont traitées une par une, comme `/api/transcribe`. L'appel au modèle de langage fait partie de la requête, la réponse arrive donc après les deux étapes.
-- Le serveur Ollama ou le serveur compatible OpenAI peut être lent au premier appel. Les timeouts sont de 120 secondes pour Ollama et de 60 secondes pour OpenAI compatible.
+- L'IA intégrée ou le serveur compatible OpenAI peut être lent au premier appel. Les timeouts sont de 120 secondes pour l'IA intégrée et de 60 secondes pour OpenAI compatible.
 
 ### Prompt personnalisé
 
@@ -72,7 +72,7 @@ Tous les champs sont obligatoires, envoyés en `multipart/form-data` :
 | ------------- | --------------------------------------------------------------------------- |
 | `audio`       | Fichier WAV                                                                 |
 | `instruction` | Votre prompt, 4000 caractères maximum                                       |
-| `provider`    | `local` (Ollama) ou `remote` (l'option **OpenAI compatible**)              |
+| `provider`    | `local` (l'IA intégrée) ou `remote` (l'option **OpenAI compatible**)              |
 | `model`       | Nom du modèle chez ce fournisseur                                           |
 
 ```bash
@@ -159,7 +159,7 @@ Les erreurs ont cette forme :
 | 422    | `prompt_not_configured`   | Le prompt enregistré n'a pas de texte ou pas de modèle                                         |
 | 422    | `provider_not_configured` | `provider` vaut `remote` mais OpenAI compatible n'est pas configuré dans le Mode Prompt        |
 | 500    | `transcription_failed`    | La transcription a échoué, pour les mêmes raisons que `/api/transcribe`                        |
-| 502    | `llm_failed`              | L'appel au modèle de langage a échoué, par exemple Ollama est arrêté ou le modèle n'existe pas |
+| 502    | `llm_failed`              | L'appel au modèle de langage a échoué, par exemple le modèle intégré n'est pas installé ou le serveur est injoignable |
 
 Les contrôles `400`, `404`, `409` et `422` sont faits avant la transcription, une requête refusée ne coûte donc aucun temps de transcription.
 

@@ -20,19 +20,19 @@ Par exemple, sans rien selectionner, dites "que signifie idempotent ?". Murmure 
 
 ## Activation
 
-Ouvrez **Extensions** > **Mode Commande** et cliquez sur **Activer le mode commande**. La premiere fois, Murmure vous demande de connecter un modele (Ollama sur votre ordinateur, ou votre propre serveur). Cette configuration est partagee avec le mode prompt, vous ne la faites qu'une fois.
+Ouvrez **Extensions** > **Mode Commande** et cliquez sur **Activer le mode commande**. La premiere fois, Murmure vous demande de connecter un modele (l'IA intégrée, ou votre propre serveur). Cette configuration est partagee avec le mode prompt, vous ne la faites qu'une fois.
 
 Si le mode commande est desactive, le raccourci Commande ne lance pas d'enregistrement. L'overlay affiche "Mode Commande désactivé". Le desactiver conserve votre modele et vos serveurs.
 
 ## Modele
 
-Les commandes ont leur propre modele, distinct des prompts du mode prompt. Choisissez le fournisseur (Ollama ou OpenAI compatible) et le modele dans **Extensions** > **Mode Commande**. Changer de prompt actif dans le mode prompt ne change pas le modele utilise par les commandes.
+Les commandes ont leur propre modele, distinct des prompts du mode prompt. Choisissez le fournisseur (IA intégrée ou OpenAI compatible) et le modele dans **Extensions** > **Mode Commande**. Changer de prompt actif dans le mode prompt ne change pas le modele utilise par les commandes.
 
 Si aucun modele n'est choisi, le raccourci Commande ne lance pas d'enregistrement. L'overlay affiche "Commande sans modèle" et Murmure vous demande de choisir un modele dans Mode Commande.
 
 ## Pre-requis
 
-Les commandes utilisent la meme configuration de modele que le [mode prompt](llm-connect.fr.md), avec Ollama ou OpenAI compatible. Le mode prompt lui-meme n'a pas besoin d'etre active.
+Les commandes utilisent la meme configuration de modele que le [mode prompt](llm-connect.fr.md), avec l'IA intégrée ou OpenAI compatible. Le mode prompt lui-meme n'a pas besoin d'etre active.
 
 ## Cas d'usage
 

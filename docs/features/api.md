@@ -57,10 +57,10 @@ Two endpoints transcribe the audio, send the text to a language model and return
 Before you use them, note the following points:
 
 - [Prompt Mode](llm-connect.md) must be enabled in **Extensions** > **Prompt Mode**. If it is disabled, both POST endpoints return a `409` error.
-- The API uses the connection already configured in Murmure. The Ollama URL, the OpenAI-compatible URL and the API key are never sent in a request.
+- The API uses the connection already configured in Murmure. The OpenAI-compatible URL and the API key are never sent in a request.
 - An API call has no effect in Murmure. There is no overlay, sound, notification or result card. Nothing is added to the history or the statistics, nothing is pasted or copied, and the active prompt and your settings do not change.
 - Requests are handled one at a time, like `/api/transcribe`. The call to the language model is part of the request, so the response arrives after both steps.
-- The Ollama server or the OpenAI-compatible server can be slow on its first call. The timeouts are 120 seconds for Ollama and 60 seconds for OpenAI-compatible.
+- The built-in AI or the OpenAI-compatible server can be slow on its first call. The timeouts are 120 seconds for the built-in AI and 60 seconds for OpenAI-compatible.
 
 ### Custom prompt
 
@@ -72,7 +72,7 @@ All fields are required, sent as `multipart/form-data`:
 | ------------- | ---------------------------------------------------------------------------------- |
 | `audio`       | WAV file                                                                           |
 | `instruction` | Your prompt, 4000 characters maximum                                               |
-| `provider`    | `local` (Ollama) or `remote` (the **OpenAI-compatible** option)                       |
+| `provider`    | `local` (the built-in AI) or `remote` (the **OpenAI-compatible** option)                       |
 | `model`       | Model name on this provider                                                        |
 
 ```bash
@@ -159,7 +159,7 @@ Errors have this shape:
 | 422    | `prompt_not_configured`   | The saved prompt has no prompt text or no model                                                |
 | 422    | `provider_not_configured` | `provider` is `remote` but OpenAI-compatible is not configured in Prompt Mode                       |
 | 500    | `transcription_failed`    | The transcription failed, for the same reasons as `/api/transcribe`                            |
-| 502    | `llm_failed`              | The language model call failed, for example Ollama is stopped or the model does not exist      |
+| 502    | `llm_failed`              | The language model call failed, for example the built-in model is not installed or the server is unreachable      |
 
 The checks for `400`, `404`, `409` and `422` are done before the transcription, so a rejected request costs no transcription time.
 

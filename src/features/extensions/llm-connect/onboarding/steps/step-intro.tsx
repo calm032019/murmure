@@ -31,10 +31,10 @@ export const StepIntro = ({ onChooseLocal, onChooseRemote }: StepIntroProps) => 
                         </div>
                         <div className="flex items-center gap-3">
                             <Monitor className="w-6 h-6 text-sky-400" />
-                            <h3 className="font-semibold text-foreground">{t('Ollama')}</h3>
+                            <h3 className="font-semibold text-foreground">{t('Built-in AI')}</h3>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                            {t('Run models on your machine. Your data never leaves your computer.')}
+                            {t('Runs inside Murmure with Qwen 3.5. Your data never leaves your computer.')}
                         </p>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                             <span className="flex items-center gap-1.5">
@@ -51,10 +51,10 @@ export const StepIntro = ({ onChooseLocal, onChooseRemote }: StepIntroProps) => 
                             className="w-full"
                             data-testid="llm-connect-choose-local"
                         >
-                            {t('Choose Ollama')}
+                            {t('Use built-in AI')}
                         </Page.PrimaryButton>
                         <p className="text-xs text-muted-foreground text-center">
-                            {t('Requires installing Ollama (free & open source)')}
+                            {t('No extra software needed')}
                         </p>
                     </div>
 

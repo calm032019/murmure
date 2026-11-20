@@ -1,3 +1,4 @@
+pub mod appearance;
 pub mod clipboard;
 pub mod dictionary;
 pub mod formatting_rules;
@@ -17,6 +18,7 @@ pub mod smartmic;
 pub mod stats;
 pub mod wake_word;
 
+pub use appearance::*;
 pub use clipboard::*;
 pub use dictionary::*;
 pub use formatting_rules::*;

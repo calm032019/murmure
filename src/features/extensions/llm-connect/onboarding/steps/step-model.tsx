@@ -2,7 +2,7 @@ import { useTranslation } from '@/i18n';
 import { Button } from '@/components/button';
 import { Typography } from '@/components/typography';
 import { motion } from 'framer-motion';
-import { Mistral, Qwen } from '@lobehub/icons';
+import { Qwen } from '@lobehub/icons';
 import { useState, useEffect } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { Page } from '@/components/page';
@@ -53,35 +53,15 @@ export const StepModel = ({
 
     const recommendedModels: RecommendedModel[] = [
         {
-            id: 'qwen3.5:latest',
-            name: 'Qwen 3.5 (9B)',
-            description: t('Best adherence to instructions'),
-            bullets: [t('Highly reliable formatting'), t('Follows directives precisely')],
-            size: t('~ 6.6 GB on disk'),
-            vram: t('8 GB VRAM recommended'),
-            icon: Qwen.Color,
-            tags: [t('Balanced'), t('Obedient')],
-            recommended: true,
-        },
-        {
-            id: 'ministral-3:latest',
-            name: 'Ministral 3 (8B)',
-            description: t('Great raw reasoning power'),
-            bullets: [t('Strong analytical abilities'), t('Less strict with instructions')],
-            size: t('~ 6 GB on disk'),
-            vram: t('7 GB VRAM recommended'),
-            icon: Mistral.Color,
-            tags: [t('Powerful'), t('Reasoning')],
-        },
-        {
             id: 'qwen3.5:4b',
             name: 'Qwen 3.5 (4B)',
-            description: t('Optimized for low-end hardware'),
-            bullets: [t('Low resource usage'), t('Less capable still reliable')],
-            size: t('~ 3.4 GB on disk'),
+            description: t('Built into Murmure, runs fully offline'),
+            bullets: [t('Cleans up and formats your dictation'), t('Uses your graphics card, or the CPU')],
+            size: t('~ 3 GB on disk'),
             vram: t('4 GB VRAM recommended'),
             icon: Qwen.Color,
-            tags: [t('Lightweight'), t('Efficient')],
+            tags: [t('Built-in'), t('Private')],
+            recommended: true,
         },
     ];
 
@@ -100,13 +80,6 @@ export const StepModel = ({
             active_mode_index: 0,
             command: { provider: isRemote ? 'remote' : 'local', model: modelName, enabled: false },
         });
-    };
-
-    const handleCustomModel = async () => {
-        if (!isInstallOnly) {
-            await applyModelToFirstMode('');
-        }
-        onNext();
     };
 
     useEffect(() => {
@@ -182,11 +155,11 @@ export const StepModel = ({
         }
     };
 
-    const title = isInstallOnly ? t('Install a Model') : t('Select a Model');
+    const title = isInstallOnly ? t('Install the Model') : t('Set up the AI model');
     const getSubtitle = () => {
-        if (isInstallOnly) return t('Download another model to use with your prompts.');
+        if (isInstallOnly) return t('Download the built-in model to use with your prompts.');
         if (isRemote) return t('Choose a model available on your server.');
-        return t('Choose a local AI model to power your transcriptions.');
+        return t('Murmure runs this model on your computer. If it was not installed with Murmure, it downloads once (about 3 GB).');
     };
     const subtitle = getSubtitle();
     const finishButtonText = isInstallOnly ? t('Done') : t('Finish Setup');
@@ -262,7 +235,7 @@ export const StepModel = ({
                 </Typography.Paragraph>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+            <div className="grid grid-cols-1 gap-4 w-full max-w-sm">
                 {recommendedModels.map((model) => (
                     <ModelCard
                         key={model.id}
@@ -283,14 +256,6 @@ export const StepModel = ({
                         {error}
                     </div>
                 )}
-
-                <Button
-                    onClick={handleCustomModel}
-                    variant="subtle"
-                    className="text-muted-foreground hover:text-foreground"
-                >
-                    {t('Choose an other model manually')}
-                </Button>
             </div>
 
             <div className="flex justify-between w-full">

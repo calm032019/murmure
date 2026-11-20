@@ -1,5 +1,6 @@
-use crate::audio::clean_recording::clean_transcription;
+use crate::audio::clean_recording::{clean_and_polish, polish_options};
 use crate::audio::helpers::resample;
+use crate::audio::smart_dictation::PolishOptions;
 use crate::audio::types::{AudioState, PreviewSnapshot};
 use crate::dictionary::{correct_transcription, sync_boost_words, Dictionary};
 use crate::engine::transcription_engine::TranscriptionEngine;
@@ -71,7 +72,7 @@ pub fn start_streaming(app: &AppHandle, audio_state: &AudioState, sample_rate: u
                 sample_rate,
                 formatting_settings,
                 dictionary,
-                remove_hesitations: settings.remove_hesitations,
+                polish: polish_options(&settings),
             });
         });
 
@@ -94,7 +95,7 @@ struct StreamingLoopParams {
     sample_rate: u32,
     formatting_settings: formatting_rules::FormattingSettings,
     dictionary: Vec<String>,
-    remove_hesitations: bool,
+    polish: PolishOptions,
 }
 
 fn streaming_thread_loop(params: StreamingLoopParams) {
@@ -106,7 +107,7 @@ fn streaming_thread_loop(params: StreamingLoopParams) {
         sample_rate,
         formatting_settings,
         dictionary,
-        remove_hesitations,
+        polish,
     } = params;
 
     let mut last_revision: u64 = 0;
@@ -124,7 +125,7 @@ fn streaming_thread_loop(params: StreamingLoopParams) {
         if let Some((queue, generation, revision)) = pending {
             last_revision = revision;
             if let Some((text, corrected)) =
-                transcribe_samples(&app, &queue, sample_rate, &dictionary, remove_hesitations)
+                transcribe_samples(&app, &queue, sample_rate, &dictionary, polish)
             {
                 emit_provisional(&app, generation, &corrected, &text, &formatting_settings);
             }
@@ -140,7 +141,7 @@ fn transcribe_samples(
     samples: &[f32],
     sample_rate: u32,
     dictionary: &[String],
-    remove_hesitations: bool,
+    polish: PolishOptions,
 ) -> Option<(String, String)> {
     let resampled = if sample_rate != 16000 {
         resample(samples, sample_rate as usize, 16000)
@@ -157,7 +158,7 @@ fn transcribe_samples(
     sync_boost_words(engine, dictionary);
     match engine.transcribe_samples(resampled, None) {
         Ok(result) => {
-            let cleaned = clean_transcription(result.text.trim(), remove_hesitations);
+            let cleaned = clean_and_polish(result.text.trim(), polish);
             if cleaned.is_empty() {
                 None
             } else {

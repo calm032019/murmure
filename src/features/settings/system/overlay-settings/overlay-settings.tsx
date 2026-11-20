@@ -2,11 +2,12 @@ import { SettingsUI } from '@/components/settings-ui';
 import { Typography } from '@/components/typography';
 import { Switch } from '@/components/switch';
 import { Slider } from '@/components/slider';
-import { ClipboardCheck, Eye, Maximize2, MoveHorizontal, Rows3, Ruler, Subtitles, Timer, Type } from 'lucide-react';
+import { ClipboardCheck, Droplet, Eye, Maximize2, MoveHorizontal, Rows3, Ruler, Subtitles, Timer, Type } from 'lucide-react';
 import { useOverlayState } from './hooks/use-overlay-state';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 import { useTranslation } from '@/i18n';
-import { AudioVisualizer } from '@/features/home/audio-visualizer/audio-visualizer';
+import { LiquidVisualizer } from '@/overlay/liquid-visualizer/liquid-visualizer';
+import { saveGlassStyle, useGlassStyle } from '@/components/hooks/use-glass-style';
 import clsx from 'clsx';
 import { VISUALIZER_CONFIG } from '@/overlay/visualizer-config';
 
@@ -32,6 +33,7 @@ export const OverlaySettings = () => {
         resultPanelDuration,
         setResultPanelDuration,
     } = useOverlayState();
+    const glassStyle = useGlassStyle();
     const { t } = useTranslation();
 
     return (
@@ -42,25 +44,18 @@ export const OverlaySettings = () => {
                     <div className="flex flex-col items-center mx-auto">
                         {(() => {
                             const visualizer = (
-                                <div
-                                    className={clsx(
-                                        'overflow-hidden flex items-center justify-center bg-black',
-                                        VISUALIZER_CONFIG[overlaySize].className
-                                    )}
-                                >
-                                    <AudioVisualizer
-                                        level={0.5}
-                                        bars={VISUALIZER_CONFIG[overlaySize].bars}
-                                        rows={9}
-                                        audioPixelWidth={VISUALIZER_CONFIG[overlaySize].pixelWidth}
-                                        audioPixelHeight={VISUALIZER_CONFIG[overlaySize].pixelHeight}
+                                <div className={VISUALIZER_CONFIG[overlaySize].className}>
+                                    <LiquidVisualizer
+                                        level={0.12}
+                                        blobs={VISUALIZER_CONFIG[overlaySize].blobs}
+                                        glassStyle={glassStyle}
                                     />
                                 </div>
                             );
                             const streamingText = streamingPreview && (
                                 <div
                                     className={clsx(
-                                        'bg-black rounded-lg px-2.5 py-1.5 leading-relaxed font-sans text-white',
+                                        'glass-pill rounded-2xl px-2.5 py-1.5 leading-relaxed font-sans text-white',
                                         overlayPosition === 'bottom' ? 'mb-0.5' : 'mt-0.5'
                                     )}
                                     style={{
@@ -112,6 +107,29 @@ export const OverlaySettings = () => {
                             <SelectItem value="hidden">{t('Hidden')}</SelectItem>
                             <SelectItem value="recording">{t('While recording')}</SelectItem>
                             <SelectItem value="always">{t('Always')}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </SettingsUI.Item>
+            <SettingsUI.Separator />
+            <SettingsUI.Item>
+                <SettingsUI.Description>
+                    <Typography.Title className="flex items-center gap-2">
+                        <Droplet className="w-4 h-4 text-muted-foreground" />
+                        {t('Glass style')}
+                    </Typography.Title>
+                    <Typography.Paragraph>
+                        {t('Clear glass shows what is behind it. Frosted glass blurs it, which is easier to read.')}
+                    </Typography.Paragraph>
+                </SettingsUI.Description>
+                <div className="flex gap-2">
+                    <Select value={glassStyle} onValueChange={saveGlassStyle}>
+                        <SelectTrigger className="w-[150px]" data-testid="glass-style-select">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="clear">{t('Clear')}</SelectItem>
+                            <SelectItem value="frosted">{t('Frosted')}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

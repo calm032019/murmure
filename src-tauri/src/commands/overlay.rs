@@ -73,6 +73,7 @@ pub fn set_overlay_position(app: AppHandle, position: String) -> Result<(), Stri
     }
     let mut s = settings::load_settings(&app);
     s.overlay_position = position;
+    s.overlay_custom_position = None;
     let res = settings::save_settings(&app, &s);
     crate::overlay::overlay::update_overlay_position(&app);
     res
@@ -134,6 +135,16 @@ pub fn set_overlay_input_region(
         crate::overlay::input_region::apply_input_region(&window, &rects);
     })
     .map_err(|e| e.to_string())
+}
+
+#[command]
+pub fn start_overlay_drag(app: AppHandle) -> Result<(), String> {
+    crate::overlay::drag::start_overlay_drag(&app)
+}
+
+#[command]
+pub fn reset_overlay_custom_position(app: AppHandle) -> Result<(), String> {
+    crate::overlay::drag::reset_overlay_custom_position(&app)
 }
 
 #[command]

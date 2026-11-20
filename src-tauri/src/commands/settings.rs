@@ -104,6 +104,20 @@ pub fn set_remove_hesitations(app: AppHandle, enabled: bool) -> Result<(), Strin
     crate::settings::save_settings(&app, &s)
 }
 
+#[command]
+pub fn set_voice_commands(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut s = crate::settings::load_settings(&app);
+    s.voice_commands = enabled;
+    crate::settings::save_settings(&app, &s)
+}
+
+#[command]
+pub fn set_self_corrections(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut s = crate::settings::load_settings(&app);
+    s.self_corrections = enabled;
+    crate::settings::save_settings(&app, &s)
+}
+
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 struct ResultPanelSettings {

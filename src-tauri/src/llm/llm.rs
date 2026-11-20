@@ -2,13 +2,11 @@ use crate::audio::types::RecordingMode;
 use crate::dictionary;
 use crate::llm::helpers::{
     load_llm_connect_settings, load_remote_api_key, resolve_api_prompt, validate_remote_request,
-    validate_url,
 };
 use crate::llm::types::SecretString;
 use crate::llm::types::{
-    ApiLlmRequest, LLMConnectSettings, LLMProvider, OllamaGenerateRequest, OllamaGenerateResponse,
-    OllamaModel, OllamaOptions, OllamaPullRequest, OllamaPullResponse, OllamaTagsResponse,
-    OpenAIChatMessage, OpenAIChatRequest, OpenAIChatResponse, OpenAIModelsResponse,
+    ApiLlmRequest, LLMConnectSettings, LLMProvider, OllamaModel, OpenAIChatMessage,
+    OpenAIChatRequest, OpenAIChatResponse, OpenAIModelsResponse,
 };
 use log::warn;
 use std::sync::LazyLock;
@@ -66,44 +64,6 @@ fn extract_system_prompt(prompt: &str) -> (Option<String>, String) {
     }
 }
 
-async fn generate_local(
-    url: &str,
-    model: &str,
-    system_prompt: Option<&str>,
-    user_prompt: &str,
-) -> Result<String, String> {
-    validate_url(url)?;
-    let url = format!("{}/generate", normalize_url(url));
-
-    let request_body = OllamaGenerateRequest {
-        model: model.to_string(),
-        prompt: user_prompt.to_string(),
-        stream: false,
-        options: Some(OllamaOptions { temperature: 0.0 }),
-        system: system_prompt.map(|s| s.to_string()),
-        think: false,
-    };
-
-    let response = HTTP_CLIENT
-        .post(&url)
-        .json(&request_body)
-        .timeout(Duration::from_secs(120))
-        .send()
-        .await
-        .map_err(|e| format!("Failed to connect to Ollama: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!("Ollama API returned error: {}", response.status()));
-    }
-
-    let ollama_response: OllamaGenerateResponse = response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse Ollama response: {}", e))?;
-
-    Ok(ollama_response.response.trim().to_string())
-}
-
 async fn generate_remote(
     remote_url: &str,
     api_key: Option<&SecretString>,
@@ -133,6 +93,8 @@ async fn generate_remote(
         messages,
         stream: false,
         think: None,
+        temperature: None,
+        chat_template_kwargs: None,
     };
 
     let request = with_bearer_auth(
@@ -182,9 +144,7 @@ async fn dispatch_to_llm(
     }
 
     let result = match provider {
-        LLMProvider::Local => {
-            generate_local(&settings.url, model, system_prompt, user_prompt).await
-        }
+        LLMProvider::Local => crate::llm::engine::generate(app, system_prompt, user_prompt).await,
         LLMProvider::Remote => {
             let api_key = load_remote_api_key();
             generate_remote(
@@ -352,45 +312,23 @@ pub async fn process_voice_command(
     .await
 }
 
-pub async fn test_ollama_connection(url: String) -> Result<bool, String> {
-    validate_url(&url)?;
-    let test_url = format!("{}/tags", normalize_url(&url));
-
-    let response = HTTP_CLIENT
-        .get(&test_url)
-        .timeout(Duration::from_secs(10))
-        .send()
-        .await
-        .map_err(|e| format!("Connection failed: {}", e))?;
-
-    if response.status().is_success() {
+/// The built-in engine ships with Murmure, so "connecting" means its files are present.
+pub async fn test_local_engine(app: &AppHandle) -> Result<bool, String> {
+    if crate::llm::engine::is_engine_available(app) {
         Ok(true)
     } else {
-        Err(format!("Server returned error: {}", response.status()))
+        Err("The built-in AI engine is missing from this install.".to_string())
     }
 }
 
-pub async fn fetch_ollama_models(url: String) -> Result<Vec<OllamaModel>, String> {
-    validate_url(&url)?;
-    let tags_url = format!("{}/tags", normalize_url(&url));
-
-    let response = HTTP_CLIENT
-        .get(&tags_url)
-        .timeout(Duration::from_secs(10))
-        .send()
-        .await
-        .map_err(|e| format!("Failed to fetch models: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!("Server returned error: {}", response.status()));
-    }
-
-    let tags_response: OllamaTagsResponse = response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse response: {}", e))?;
-
-    Ok(tags_response.models)
+/// Lists the built-in model once it is installed.
+pub async fn fetch_local_models(app: &AppHandle) -> Result<Vec<OllamaModel>, String> {
+    Ok(match crate::llm::engine::is_model_available(app) {
+        true => vec![OllamaModel {
+            name: crate::llm::engine::MODEL_ID.to_string(),
+        }],
+        false => Vec::new(),
+    })
 }
 
 async fn fetch_openai_models_raw(
@@ -444,116 +382,20 @@ pub async fn fetch_remote_models(
         .collect())
 }
 
-pub async fn pull_ollama_model(app: AppHandle, url: String, model: String) -> Result<(), String> {
-    validate_url(&url)?;
-    let pull_url = format!("{}/pull", normalize_url(&url));
-
-    let request_body = OllamaPullRequest {
-        model: model.clone(),
-        stream: true,
-    };
-
-    let mut response = HTTP_CLIENT
-        .post(&pull_url)
-        .json(&request_body)
-        .timeout(Duration::from_secs(300))
-        .send()
-        .await
-        .map_err(|e| format!("Failed to connect to Ollama: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!("Ollama API returned error: {}", response.status()));
-    }
-
-    let mut buffer = String::new();
-    while let Some(chunk) = response.chunk().await.map_err(|e| e.to_string())? {
-        buffer.push_str(&String::from_utf8_lossy(&chunk));
-
-        while let Some(pos) = buffer.find('\n') {
-            let line: String = buffer.drain(..=pos).collect();
-            if let Ok(pull_response) = serde_json::from_str::<OllamaPullResponse>(line.trim()) {
-                let _ = app.emit("llm-pull-progress", pull_response);
-            }
-        }
-    }
-
-    Ok(())
-}
-
-async fn ollama_model_already_loaded(url: &str, model: &str) -> bool {
-    let ps_url = format!("{}/ps", normalize_url(url));
-    let Ok(resp) = HTTP_CLIENT
-        .get(&ps_url)
-        .timeout(Duration::from_secs(2))
-        .send()
-        .await
-    else {
-        return false;
-    };
-    if !resp.status().is_success() {
-        return false;
-    }
-    let Ok(parsed) = resp.json::<OllamaTagsResponse>().await else {
-        return false;
-    };
-    parsed.models.iter().any(|m| m.name == model)
-}
-
 pub async fn warmup_ollama_model(app: &AppHandle, mode: RecordingMode) -> Result<(), String> {
     let settings = load_llm_connect_settings(app);
-
-    if settings.url.trim().is_empty() {
-        return Ok(());
-    }
-    let (provider, model) = match mode {
-        RecordingMode::Command => (
-            settings.command.provider.clone(),
-            settings.command.model.clone(),
-        ),
+    let provider = match mode {
+        RecordingMode::Command if settings.command.enabled => settings.command.provider.clone(),
+        RecordingMode::Command => return Ok(()),
         RecordingMode::Standard | RecordingMode::Llm => match active_mode_target(&settings) {
-            Ok(target) => target,
+            Ok((provider, _)) => provider,
             Err(_) => return Ok(()),
         },
     };
-    if model.trim().is_empty() {
-        return Ok(());
+    match provider {
+        LLMProvider::Local => crate::llm::engine::warmup(app).await,
+        LLMProvider::Remote => Ok(()),
     }
-
-    if provider == LLMProvider::Remote {
-        return Ok(());
-    }
-
-    if ollama_model_already_loaded(&settings.url, &model).await {
-        return Ok(());
-    }
-
-    let url = format!("{}/generate", normalize_url(&settings.url));
-
-    let request_body = OllamaGenerateRequest {
-        model,
-        prompt: " ".to_string(),
-        stream: false,
-        options: Some(OllamaOptions { temperature: 0.0 }),
-        system: None,
-        think: false,
-    };
-
-    let response = HTTP_CLIENT
-        .post(&url)
-        .json(&request_body)
-        .timeout(Duration::from_secs(120))
-        .send()
-        .await
-        .map_err(|e| format!("Failed to connect to Ollama for warmup: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!(
-            "Ollama warmup returned error: {}",
-            response.status()
-        ));
-    }
-
-    Ok(())
 }
 
 pub fn warmup_ollama_model_background(app: &AppHandle, mode: RecordingMode) {

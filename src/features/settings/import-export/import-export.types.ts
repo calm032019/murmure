@@ -17,6 +17,8 @@ export type ExportedSystemSettings = Omit<
     | 'wayland_clipboard_fallback_dismissed'
     | 'keep_recordings'
     | 'remove_hesitations'
+    | 'voice_commands'
+    | 'self_corrections'
 >;
 
 export interface MurmureExportData {

@@ -1,48 +1,24 @@
 # Prompt Mode Issues
 
-## Ollama 500 Error
+## "The AI model is not installed yet"
 
-A 500 error from Ollama usually means the model is too large for your available memory.
+The built-in model file was not installed with Murmure and has not been downloaded yet.
 
-### Diagnosis
+**Fix**: open **Extensions** > **Prompt Mode** > **Advanced configuration** and click **Download model** (about 3 GB, once). You can also place `Qwen_Qwen3.5-4B-Q4_K_M.gguf` next to the Murmure setup file and run the setup again.
 
-```bash
-# Check which models are installed
-ollama list
+## "The downloaded model failed its integrity check"
 
-# Check if a model is loaded and using GPU
-ollama ps
+The download was corrupted or cut short. Murmure deletes the bad file. Click **Download model** again.
 
-# Test the model directly
-ollama run qwen3.5:4b
-```
+## "The AI engine did not start in time"
 
-If `ollama ps` shows **0% GPU**, inference runs entirely on CPU and will be very slow.
+The engine has 90 seconds to load the model. This can fail on a very slow disk or when the computer is short of memory.
 
-### Fix: Use a Smaller Model
+**Fix**: close other heavy applications and try again. The engine needs about 3 GB of free graphics memory (or RAM without a graphics card).
 
-| Available RAM/VRAM     | Recommended Model |
-| ---------------------- | ----------------- |
-| 4 GB                   | `qwen3.5:2b`      |
-| 8 GB                   | `qwen3.5:4b`      |
-| 16+ GB (or 8+ GB VRAM) | `qwen3.5:8b`      |
+## "The built-in AI engine is missing from this install"
 
-```bash
-ollama pull qwen3.5:4b
-```
-
-Then select the new model in Murmure's Prompt Mode settings.
-
-## Ollama Not Detected
-
-Murmure may not auto-detect Ollama in some configurations.
-
-**Fix**: Manually set the Ollama URL in Prompt Mode settings:
-
-- Ollama on your computer: `http://localhost:11434/api`
-- Ollama on another machine: `http://<server-ip>:11434/api`
-
-The URL must end with `/api`. Without `/api`, Ollama answers 404 to the connection test and to prompts.
+The engine files were removed, often by antivirus software. Reinstall Murmure.
 
 ## LLM Output Contains Quotes or Tags
 
@@ -55,18 +31,17 @@ Some models wrap their output in quotes (`"..."`) or include thinking tags (`<th
 
 ## LLM Response is Very Slow
 
-- **No GPU**: LLM inference on CPU is slow. Consider a smaller model or getting a GPU.
-- **Model too large**: If the model doesn't fit in VRAM, it falls back to CPU. Use `ollama ps` to check GPU usage.
-- **First request**: The first request after launching is slower (model loading). Subsequent requests are faster.
+- **No GPU**: without a graphics card, the built-in AI runs on the CPU and is slower.
+- **First request**: the first request starts the engine and loads the model (a few seconds). The next ones take about a second. After 10 minutes without use the engine stops, so the next request is a first request again.
 
 ## Server Connection Issues
 
-For Ollama or OpenAI-compatible servers running on another machine:
+For OpenAI-compatible servers running on another machine:
 
-1. Verify the server is reachable: `curl http://<server>:<port>/api/tags`
+1. Verify the server is reachable: `curl http://<server>:<port>/v1/models`
 2. Check firewall settings on both machines
 3. Ensure the URL in Murmure includes the protocol (`http://` or `https://`)
-4. For Ollama, make sure `OLLAMA_HOST=0.0.0.0` is set on the server to allow remote connections
+4. For Ollama on another machine, make sure `OLLAMA_HOST=0.0.0.0` is set on the server and use `http://<server>:11434/v1`
 
 !!! note "Server without a /models endpoint"
     Some OpenAI-compatible servers, such as the Claude API, do not expose `/models`. Test Connection then fails on the model list, but the server can still be used: type the exact model name in the model field and the OpenAI-compatible provider stays available. A failed model list never locks the provider.

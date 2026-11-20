@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { StepIntro } from './steps/step-intro';
-import { StepInstall } from './steps/step-install';
 import { StepModel } from './steps/step-model';
 import { StepRemoteConfig } from './steps/step-remote-config';
 import { LLMConnectSettings, OllamaModel } from '../hooks/use-llm-connect';
@@ -23,7 +22,6 @@ interface LLMConnectOnboardingProps {
 }
 
 export const LLMConnectOnboarding = ({
-    testConnection,
     pullModel,
     updateSettings,
     completeOnboarding,
@@ -89,7 +87,6 @@ export const LLMConnectOnboarding = ({
 
         return [
             introStep,
-            <StepInstall key="install" onNext={nextStep} testConnection={testConnection} />,
             <StepModel
                 key="model"
                 onNext={handleComplete}
@@ -109,7 +106,7 @@ export const LLMConnectOnboarding = ({
         return (
             <div className="min-h-[600px] flex flex-col">
                 <div className="flex-1 relative">
-                    <AnimatePresence mode="wait">{steps[2]}</AnimatePresence>
+                    <AnimatePresence mode="wait">{steps[steps.length - 1]}</AnimatePresence>
                 </div>
             </div>
         );

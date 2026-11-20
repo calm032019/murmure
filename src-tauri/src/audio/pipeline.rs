@@ -1,6 +1,7 @@
 use crate::audio::chunking::{ChunkPipeline, Chunker};
-use crate::audio::clean_recording::clean_transcription;
+use crate::audio::clean_recording::{clean_and_polish, polish_options};
 use crate::audio::helpers::{read_wav_mono_native, resample, rms};
+use crate::audio::pause_breaks::{edge_silence, insert_pause_breaks, word_timings};
 use crate::audio::types::{AudioState, RecordingMode};
 use crate::dictionary::{correct_transcription, sync_boost_words, Dictionary};
 use crate::engine::transcription_engine::{TranscriptionEngine, TranscriptionResult};
@@ -21,7 +22,13 @@ pub struct ProcessingResult {
 }
 
 pub enum ChunkOutcome {
-    Text { cleaned: String, corrected: String },
+    Text {
+        cleaned: String,
+        corrected: String,
+        /// Silence before the first word and after the last one, in seconds.
+        lead_silence: f32,
+        trail_silence: f32,
+    },
     Empty,
     Failed,
 }
@@ -49,6 +56,8 @@ pub fn process_chunk(app: &AppHandle, samples: Vec<f32>, sample_rate: u32) -> Ch
         return ChunkOutcome::Empty;
     }
     let padded = pad_with_silence(&resampled, 16000);
+    let padded_secs = padded.len() as f32 / 16000.0;
+    let pause_breaks = crate::settings::load_settings(app).voice_commands;
 
     let dictionary = app.state::<Dictionary>().get();
     let state = app.state::<AudioState>();
@@ -75,6 +84,17 @@ pub fn process_chunk(app: &AppHandle, samples: Vec<f32>, sample_rate: u32) -> Ch
                 // 4. Dictionary correction
                 let corrected =
                     correct_transcription(trimmed, &dictionary, &result.word_confidences);
+                let timings = word_timings(&result.segments);
+                let (lead_silence, trail_silence) =
+                    edge_silence(&timings, padded_secs, INFERENCE_SILENCE_PAD_SECS);
+                let (cleaned, corrected) = if pause_breaks {
+                    (
+                        insert_pause_breaks(trimmed, &timings),
+                        insert_pause_breaks(&corrected, &timings),
+                    )
+                } else {
+                    (trimmed.to_string(), corrected)
+                };
                 if log::log_enabled!(log::Level::Debug) {
                     let confidences = crate::dictionary::confidence_map(&result.word_confidences);
                     for candidate in crate::dictionary::fuzzy_correction_candidates(
@@ -86,8 +106,10 @@ pub fn process_chunk(app: &AppHandle, samples: Vec<f32>, sample_rate: u32) -> Ch
                     }
                 }
                 ChunkOutcome::Text {
-                    cleaned: trimmed.to_string(),
+                    cleaned,
                     corrected,
+                    lead_silence,
+                    trail_silence,
                 }
             }
         }
@@ -221,9 +243,9 @@ fn transcribe_file_raw_cancellable(
 }
 
 fn clean_accumulated(app: &AppHandle, accumulated: &str) -> String {
-    clean_transcription(
+    clean_and_polish(
         accumulated,
-        crate::settings::load_settings(app).remove_hesitations,
+        polish_options(&crate::settings::load_settings(app)),
     )
 }
 
@@ -366,10 +388,7 @@ pub fn process_recording_from_samples(
     }
 
     // 2. Deduplicate repeated words
-    let text = clean_transcription(
-        &raw_text,
-        crate::settings::load_settings(app).remove_hesitations,
-    );
+    let text = clean_accumulated(app, &raw_text);
 
     // 3. Dictionary correction
     let text = apply_dictionary_correction(app, text, &result.word_confidences)?;

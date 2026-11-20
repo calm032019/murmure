@@ -6,44 +6,39 @@ Le mode prompt (anciennement LLM Connect) permet de post-traiter votre transcrip
 
 ## Pre-requis
 
-Vous avez besoin de :
+Vous avez besoin de l'une de ces options :
 
-- **Ollama** - Gratuit, tourne sur votre machine
-- **OpenAI compatible** - LM Studio, Magnitude, llama.cpp, vLLM, ou un fournisseur cloud.
+- **IA intégrée** - Murmure execute le modele Qwen 3.5 (4B) sur votre ordinateur. Rien d'autre a installer.
+- **OpenAI compatible** - LM Studio, Magnitude, llama.cpp, vLLM, Ollama, ou un fournisseur cloud.
 
-## Configuration avec Ollama
+!!! note "Plateforme"
+    L'IA intégrée est actuellement fournie avec la version Windows. Sous macOS et Linux, utilisez l'option OpenAI compatible.
 
-### 1. Installer Ollama
+## Configuration avec l'IA intégrée
 
-Telechargez depuis [ollama.com](https://ollama.com) et installez, puis assurez-vous qu'Ollama est en cours d'execution.
+Murmure inclut son propre moteur d'IA (llama.cpp) et utilise le modele Qwen 3.5 (4B). Il tourne sur votre carte graphique si vous en avez une, sinon sur le processeur. Rien ne quitte votre ordinateur.
 
-### 2. Ouvrir l'onboarding du Mode Prompt dans Murmure
+### Le fichier du modele
+
+Le modele pese environ 3 Go, trop pour tenir dans l'installeur. Il est fourni de l'une de ces deux facons :
+
+- **Installe avec Murmure** : si le fichier d'installation est accompagne de `Qwen_Qwen3.5-4B-Q4_K_M.gguf` dans le meme dossier, l'installeur copie le modele automatiquement.
+- **Telecharge une seule fois** : sinon, Murmure le telecharge la premiere fois que vous configurez le mode prompt, avec une barre de progression. Le fichier est verifie avec sa somme de controle connue avant d'etre utilise.
+
+### Ouvrir l'onboarding du Mode Prompt dans Murmure
 
 1. Ouvrez Murmure > **Extensions** > **Mode Prompt** et cliquez sur **Activer le mode prompt**
-2. Suivez l'assistant d'onboarding en 3 etapes. Cliquez d'abord sur **Choisir Ollama**
-3. Installez Ollama : Murmure verifie la connexion a Ollama
-4. Choisissez le modele : Murmure affiche une liste de modeles recommandes avec les exigences materiel. Cliquez sur un modele pour le telecharger, Murmure orchestre le telechargement directement depuis son interface, avec une barre de progression
-5. Une fois le modele choisi, cliquez sur **Finish Setup** pour terminer la configuration
+2. Cliquez sur **Utiliser l'IA intégrée**
+3. Cliquez sur la carte **Qwen 3.5 (4B)**. Si le modele n'est pas encore sur votre ordinateur, Murmure le telecharge
+4. Cliquez sur **Terminer l'installation** pour terminer la configuration
 
-**Recommandations par materiel :**
+Le moteur demarre la premiere fois qu'un prompt est utilise (quelques secondes), puis repond en une seconde environ. Il s'arrete tout seul apres 10 minutes sans utilisation, et a chaque fermeture de Murmure.
 
-| VRAM recommandee | Modele recommande    | Notes                                       |
-| ---------------- | -------------------- | ------------------------------------------- |
-| 4 Go             | `qwen3.5:4b`         | Leger, corrections basiques                 |
-| 7 Go             | `ministral-3:latest` | Bon raisonnement (Ministral 3 8B)           |
-| 8 Go             | `qwen3.5:latest`     | Meilleur suivi des instructions (Qwen 3.5 9B) |
+!!! note "Reflexion desactivee"
+    Qwen 3.5 peut "reflechir" avant de repondre. Murmure desactive toujours cette option : le nettoyage et le formatage sont des taches de reecriture, et la reflexion ne fait que les ralentir.
 
 !!! warning "Sans GPU = lent"
-    Sans GPU, l'inference LLM est tres lente. Pour une experience fluide, il faut soit un GPU avec suffisamment de VRAM, soit un CPU rapide avec assez de RAM.
-
-### Verifier qu'Ollama fonctionne
-
-```bash
-ollama list    # Modeles installes
-ollama ps      # Modele charge + utilisation GPU
-```
-
-Si `ollama ps` affiche **0% GPU**, l'inference sera sur CPU uniquement.
+    Sans carte graphique, le modele tourne sur le processeur et chaque prompt prend nettement plus de temps.
 
 ## Configuration avec OpenAI compatible
 
@@ -64,10 +59,10 @@ Murmure supporte toute API compatible OpenAI : LM Studio, Magnitude, llama.cpp, 
 !!! note "Confidentialite"
     Murmure n'affiche l'avertissement de confidentialite pour cette option que si l'URL n'est pas locale ou privee (autre que `localhost`, `127.0.0.1`, `10.x`, `192.168.x` ou `172.16` a `172.31.x`). Un serveur local compatible OpenAI reste prive.
 
-!!! note "Ollama sur une autre machine"
-    Si vous hebergez Ollama sur une autre machine, utilisez l'option **Ollama** avec une URL comme `http://your-server:11434/api`, et assurez-vous que `OLLAMA_HOST=0.0.0.0` est defini sur le serveur pour accepter les connexions reseau.
+!!! note "Ollama"
+    Ollama n'est plus necessaire. Si vous l'utilisez deja, vous pouvez toujours le connecter comme serveur compatible OpenAI avec l'URL `http://localhost:11434/v1`.
 
-Vous pouvez mixer les fournisseurs entre vos prompts - par exemple, Prompt 1 avec Ollama et Prompt 2 avec OpenAI compatible.
+Vous pouvez mixer les fournisseurs entre vos prompts - par exemple, Prompt 1 avec l'IA intégrée et Prompt 2 avec OpenAI compatible.
 
 ![Configuration avancee du Mode Prompt](../assets/llm-connect-advanced.png)
 

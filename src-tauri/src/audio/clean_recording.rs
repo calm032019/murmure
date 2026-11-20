@@ -1,3 +1,4 @@
+use crate::audio::smart_dictation::{polish, PolishOptions};
 use crate::audio::types::AudioState;
 use crate::wake_word::wake_word::normalize_text;
 use log::{debug, error};
@@ -75,7 +76,30 @@ fn is_filler(word: &str) -> bool {
     FILLER_WORDS.contains(&lower.as_str())
 }
 
+/// Dedupe stutters, then apply the smart dictation passes the user has enabled.
+pub(super) fn clean_and_polish(text: &str, opts: PolishOptions) -> String {
+    polish(&clean_transcription(text, false), opts)
+}
+
+pub(super) fn polish_options(settings: &crate::settings::AppSettings) -> PolishOptions {
+    PolishOptions {
+        remove_fillers: settings.remove_hesitations,
+        voice_commands: settings.voice_commands,
+        self_corrections: settings.self_corrections,
+    }
+}
+
+/// Line breaks (from pause detection) are kept; each line is cleaned on its own.
 pub(super) fn clean_transcription(text: &str, remove_hesitations: bool) -> String {
+    text.split('\n')
+        .map(|line| clean_line(line, remove_hesitations))
+        .collect::<Vec<_>>()
+        .join("\n")
+        .trim()
+        .to_string()
+}
+
+fn clean_line(text: &str, remove_hesitations: bool) -> String {
     let words: Vec<&str> = text
         .split_whitespace()
         .filter(|w| !remove_hesitations || !is_filler(w))

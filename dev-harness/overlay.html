@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Overlay harness</title>
+        <link rel="stylesheet" href="./desktop.css" />
+        <style>
+            #root {
+                width: 350px;
+                height: 200px;
+                margin: 60px auto 0;
+                outline: 1px dashed rgba(255, 255, 255, 0.15);
+            }
+            /* The real overlay window is exactly this box; h-screen fills it. */
+            #root .h-screen {
+                height: 100%;
+            }
+            #controls {
+                position: fixed;
+                top: 8px;
+                left: 8px;
+                font: 12px system-ui;
+                color: #fff;
+                display: flex;
+                gap: 6px;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <!-- ?size=small|medium|large  ?mode=standard|llm|command  ?level=0..1 (fixed) ?bg=light -->
+    <body class="harness-desktop">
+        <div id="controls"></div>
+        <div id="root"></div>
+        <script type="module">
+            import { installMockBackend } from './mock-backend.ts';
+            import { emit } from '@tauri-apps/api/event';
+
+            const params = new URLSearchParams(location.search);
+            if (params.get('bg') === 'light') document.body.style.background = '#e9edf3';
+            if (params.has('zoom')) document.getElementById('root').style.zoom = params.get('zoom');
+            installMockBackend('recording_overlay', {
+                overlay_size: params.get('size') ?? 'small',
+                overlay_mode: 'always',
+                glass_style: params.get('glass') ?? 'clear',
+            });
+            await import('../src/overlay/main.tsx');
+
+            const mode = params.get('mode') ?? 'standard';
+            setTimeout(() => emit('recording-mode', mode), 300);
+            if (params.has('processing')) setTimeout(() => emit('llm-processing-start'), 300);
+
+            // Synthetic speech: syllable-rate bursts riding on a slower phrase envelope.
+            const fixed = params.get('level');
+            const start = performance.now();
+            const controls = document.getElementById('controls');
+            setInterval(() => {
+                const t = (performance.now() - start) / 1000;
+                const phrase = Math.max(0, Math.sin(t * 0.9));
+                const syllables = 0.5 + 0.5 * Math.sin(t * 11) * Math.sin(t * 4.3);
+                // Roughly what the backend sends for normal speech (linear RMS x3).
+                const level = fixed != null ? Number(fixed) : phrase * (0.03 + 0.25 * syllables);
+                controls.textContent = `level ${level.toFixed(2)}`;
+                emit('mic-level', level);
+            }, 33);
+        </script>
+    </body>
+</html>

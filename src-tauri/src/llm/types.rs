@@ -176,43 +176,9 @@ pub struct ApiLlmTranscription {
     pub outcome: Result<String, String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct OllamaGenerateRequest {
-    pub model: String,
-    pub prompt: String,
-    pub stream: bool,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub options: Option<OllamaOptions>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub system: Option<String>,
-    pub think: bool,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct OllamaOptions {
-    pub temperature: f32,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct OllamaGenerateResponse {
-    pub response: String,
-    pub done: bool,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct OllamaTagsResponse {
-    pub models: Vec<OllamaModel>,
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct OllamaModel {
     pub name: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct OllamaPullRequest {
-    pub model: String,
-    pub stream: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -236,6 +202,15 @@ pub struct OpenAIChatRequest {
     pub stream: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub think: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub temperature: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_template_kwargs: Option<ChatTemplateKwargs>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ChatTemplateKwargs {
+    pub enable_thinking: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

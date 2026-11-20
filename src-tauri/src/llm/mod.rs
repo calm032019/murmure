@@ -1,4 +1,5 @@
 pub mod command;
+pub mod engine;
 pub mod helpers;
 pub mod llm;
 pub mod transform;

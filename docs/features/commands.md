@@ -20,19 +20,19 @@ For example, with nothing selected, say "what does idempotent mean?". Murmure gi
 
 ## Turning It On
 
-Open **Extensions** > **Command Mode** and click **Enable Command Mode**. The first time, Murmure asks you to connect a model (Ollama on your computer, or your own server). This setup is shared with Prompt Mode, so you only do it once.
+Open **Extensions** > **Command Mode** and click **Enable Command Mode**. The first time, Murmure asks you to connect a model (the built-in AI, or your own server). This setup is shared with Prompt Mode, so you only do it once.
 
 If Command Mode is off, the Command shortcut does not start a recording. The overlay shows "Command Mode is off". Turning it off keeps your model and servers.
 
 ## Model
 
-Commands have their own model, separate from the Prompt Mode prompts. Choose the provider (Ollama or OpenAI-compatible) and the model in **Extensions** > **Command Mode**. Changing the active prompt in Prompt Mode does not change the model used by commands.
+Commands have their own model, separate from the Prompt Mode prompts. Choose the provider (Built-in AI or OpenAI-compatible) and the model in **Extensions** > **Command Mode**. Changing the active prompt in Prompt Mode does not change the model used by commands.
 
 If no model is chosen, the Command shortcut does not start a recording. The overlay shows "Command has no model" and Murmure asks you to choose a model in Command Mode.
 
 ## Requirements
 
-Commands use the same model setup as [Prompt Mode](llm-connect.md), with Ollama or OpenAI-compatible. Prompt Mode itself does not need to be on.
+Commands use the same model setup as [Prompt Mode](llm-connect.md), with the built-in AI or OpenAI-compatible. Prompt Mode itself does not need to be on.
 
 ## Use Cases
 

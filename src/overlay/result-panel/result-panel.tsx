@@ -68,8 +68,8 @@ export const ResultPanel = ({
                 'group',
                 'relative',
                 'overflow-hidden',
-                'rounded-t-lg',
-                'bg-black',
+                'rounded-2xl',
+                'glass-pill',
                 'px-2.5',
                 'pt-1.5',
                 'pb-2'
@@ -101,13 +101,13 @@ export const ResultPanel = ({
                     'items-center',
                     'justify-center',
                     'rounded-full',
-                    'bg-black',
-                    'text-neutral-300',
+                    'glass-pill',
+                    'text-neutral-200',
                     'transition-all',
                     'duration-150',
                     'ease-out',
                     'hover:scale-110',
-                    'hover:bg-neutral-700',
+                    'hover:brightness-150',
                     'hover:text-white'
                 )}
             >
@@ -136,7 +136,7 @@ export const ResultPanel = ({
                     {text}
                 </div>
                 {hasContentBelow && (
-                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-black to-transparent" />
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-[rgb(14_18_28/0.85)] to-transparent" />
                 )}
             </div>
 

@@ -55,7 +55,7 @@ export const ProviderModelPicker = ({
             return;
         }
         if (value === 'local' && !isLocalConfigured) {
-            toast.info(t('Configure your local Ollama server in Advanced configuration first.'), {
+            toast.info(t('Download the built-in model in Advanced configuration first.'), {
                 autoClose: 3000,
             });
             return;
@@ -90,7 +90,7 @@ export const ProviderModelPicker = ({
                                         isLocalConfigured ? 'text-sky-400' : 'text-zinc-500'
                                     )}
                                 />
-                                {t('Ollama')}
+                                {t('Built-in')}
                             </div>
                         </SelectItem>
                         <SelectItem value="remote">

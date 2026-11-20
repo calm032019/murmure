@@ -1,3 +1,7 @@
+use crate::audio::chunk_seam::{
+    repair_seam, replace_first_word, replace_last_word, SEAM_CONTEXT_SECS,
+};
+use crate::audio::pause_breaks::is_paragraph_pause;
 use crate::audio::pipeline::{process_chunk, ChunkOutcome};
 use crate::audio::types::{AudioState, PreviewSnapshot};
 use crate::audio::vad::{AdaptiveVad, VoiceActivity};
@@ -61,7 +65,7 @@ struct PreviewObserver {
 }
 
 /// Default arm length: once the current chunk reaches this, a detected silence cuts it.
-const CHUNK_SILENCE_ARM_SECS: u32 = 15;
+const CHUNK_SILENCE_ARM_SECS: u32 = 30;
 /// Silence duration that cuts the current chunk once it is armed.
 const CHUNK_SILENCE_CUT_MS: u64 = 500;
 /// Hard cut applied when no silence has been detected by this length.
@@ -168,6 +172,10 @@ fn spawn_worker(
                 && epoch.is_some_and(|e| PIPELINE_EPOCH.load(Ordering::SeqCst) == e)
         };
         let mut expected_seq: u64 = 0;
+        let mut prev_tail: Vec<f32> = Vec::new();
+        let pause_breaks = crate::settings::load_settings(&app).voice_commands;
+        // Silence since the last transcribed word, carried across chunk cuts.
+        let mut silence_before: f32 = 0.0;
         while let Ok(job) = rx.recv() {
             match job {
                 ChunkJob::Audio {
@@ -183,6 +191,15 @@ fn spawn_worker(
                         continue;
                     }
                     let chunk_secs = samples.len() as f32 / sample_rate.max(1) as f32;
+                    let context = (SEAM_CONTEXT_SECS * sample_rate as f32) as usize;
+                    // Only silence cuts need a seam check; forced cuts carry
+                    // their own overlap and are deduplicated instead.
+                    let seam_audio = (overlap_prefix == 0 && !prev_tail.is_empty()).then(|| {
+                        let mut seam = std::mem::take(&mut prev_tail);
+                        seam.extend_from_slice(&samples[..samples.len().min(context)]);
+                        seam
+                    });
+                    prev_tail = samples[samples.len().saturating_sub(context)..].to_vec();
 
                     if let Some(link) = preview.as_ref() {
                         link.inference_active.store(true, Ordering::SeqCst);
@@ -192,10 +209,24 @@ fn spawn_worker(
                         link.inference_active.store(false, Ordering::SeqCst);
                     }
 
-                    let (cleaned_text, corrected_text) = match outcome {
-                        ChunkOutcome::Text { cleaned, corrected } => (cleaned, corrected),
-                        ChunkOutcome::Empty => (String::new(), String::new()),
+                    let mut seam_silence = silence_before;
+                    let (mut cleaned_text, mut corrected_text) = match outcome {
+                        ChunkOutcome::Text {
+                            cleaned,
+                            corrected,
+                            lead_silence,
+                            trail_silence,
+                        } => {
+                            seam_silence += lead_silence;
+                            silence_before = trail_silence;
+                            (cleaned, corrected)
+                        }
+                        ChunkOutcome::Empty => {
+                            silence_before += chunk_secs;
+                            (String::new(), String::new())
+                        }
                         ChunkOutcome::Failed => {
+                            silence_before = 0.0;
                             if owns_ui() {
                                 let _ = app.emit("transcription-chunk-error", ());
                             }
@@ -210,8 +241,39 @@ fn spawn_worker(
                         corrected_text.len()
                     );
 
-                    let delta =
-                        merge_chunk(&accumulated, &cleaned_text, &corrected_text, overlap_prefix);
+                    if let Some(seam) = seam_audio {
+                        if !corrected_text.is_empty() {
+                            fix_seam(
+                                &app,
+                                &accumulated,
+                                seam,
+                                sample_rate,
+                                &mut cleaned_text,
+                                &mut corrected_text,
+                            );
+                        }
+                    }
+
+                    // A long silence at a cut after a finished sentence is a
+                    // paragraph break, just like one inside a chunk.
+                    let separator = if pause_breaks
+                        && overlap_prefix == 0
+                        && is_paragraph_pause(seam_silence)
+                        && accumulated
+                            .lock()
+                            .is_ok_and(|acc| acc.trim_end().ends_with(['.', '?', '!']))
+                    {
+                        "\n\n"
+                    } else {
+                        " "
+                    };
+                    let delta = merge_chunk(
+                        &accumulated,
+                        &cleaned_text,
+                        &corrected_text,
+                        overlap_prefix,
+                        separator,
+                    );
                     let trimmed_corrected = delta.corrected.trim();
                     if !trimmed_corrected.is_empty() && owns_ui() {
                         if let Some(settings) = freeze_settings.as_ref() {
@@ -229,6 +291,40 @@ fn spawn_worker(
             }
         }
     })
+}
+
+/// Undoes a sentence break that a silence cut invented between the text
+/// accumulated so far and the next chunk (see `chunk_seam`).
+fn fix_seam(
+    app: &AppHandle,
+    accumulated: &Arc<Mutex<String>>,
+    seam_audio: Vec<f32>,
+    sample_rate: u32,
+    cleaned_text: &mut String,
+    corrected_text: &mut String,
+) {
+    let ChunkOutcome::Text {
+        corrected: seam_text,
+        ..
+    } = process_chunk(app, seam_audio, sample_rate)
+    else {
+        return;
+    };
+    let Ok(mut acc) = accumulated.lock() else {
+        return;
+    };
+    let Some(last) = acc.split_whitespace().last().map(str::to_string) else {
+        return;
+    };
+    let Some(first) = corrected_text.split_whitespace().next().map(str::to_string) else {
+        return;
+    };
+    if let Some((fixed_last, fixed_first)) = repair_seam(&last, &first, &seam_text) {
+        debug!("Standard chunking: joined sentence across silence cut");
+        replace_last_word(&mut acc, &fixed_last);
+        *corrected_text = replace_first_word(corrected_text, &first, &fixed_first);
+        *cleaned_text = replace_first_word(cleaned_text, &first, &fixed_first);
+    }
 }
 
 fn load_formatting_settings(app: &AppHandle) -> formatting_rules::FormattingSettings {
@@ -275,6 +371,7 @@ fn merge_chunk(
     cleaned_text: &str,
     corrected_text: &str,
     overlap_prefix: usize,
+    separator: &str,
 ) -> ChunkDelta {
     let Ok(mut acc) = accumulated.lock() else {
         error!("Chunk pipeline: accumulator mutex poisoned, dropping chunk");
@@ -303,7 +400,7 @@ fn merge_chunk(
         acc.push_str(&deduped);
         deduped
     } else {
-        let with_space = format!(" {}", deduped);
+        let with_space = format!("{}{}", separator, deduped);
         acc.push_str(&with_space);
         with_space
     };
@@ -550,7 +647,7 @@ mod tests {
 
     #[test]
     fn chunker_silence_cuts_once_armed() {
-        let mut samples = speech(16.0);
+        let mut samples = speech(31.0);
         samples.extend(silence(2.0));
         samples.extend(speech(5.0));
         assert_eq!(drive_chunker(&samples), 2);
@@ -558,7 +655,7 @@ mod tests {
 
     #[test]
     fn chunker_silence_cuts_low_amplitude_audio_once_armed() {
-        let mut samples = vec![0.025; (SR as f32 * 16.0) as usize];
+        let mut samples = vec![0.025; (SR as f32 * 31.0) as usize];
         samples.extend(silence(2.0));
         samples.extend(vec![0.025; (SR as f32 * 5.0) as usize]);
         assert_eq!(drive_chunker(&samples), 2);
@@ -567,7 +664,7 @@ mod tests {
     #[test]
     fn chunker_cuts_rode_micro_on_silence_after_early_calibration() {
         let mut samples = vec![0.0012; (SR as f32 * 2.0) as usize];
-        samples.extend(vec![0.0128; (SR as f32 * 20.0) as usize]);
+        samples.extend(vec![0.0128; (SR as f32 * 35.0) as usize]);
         samples.extend(vec![0.0012; (SR as f32 * 2.0) as usize]);
         samples.extend(vec![0.0128; (SR as f32 * 5.0) as usize]);
 
@@ -582,7 +679,7 @@ mod tests {
 
         assert_eq!(audio_lengths.len(), 2);
         let first_chunk_secs = audio_lengths[0] as f32 / SR as f32;
-        assert!((22.4..22.8).contains(&first_chunk_secs));
+        assert!((37.4..37.8).contains(&first_chunk_secs));
         assert!(first_chunk_secs < CHUNK_FORCE_CUT_SECS as f32);
     }
 
@@ -662,7 +759,7 @@ mod tests {
     #[test]
     fn merge_silence_cut_joins_with_space() {
         let acc = Arc::new(Mutex::new(String::from("bonjour")));
-        let delta = merge_chunk(&acc, "le monde", "le monde", 0);
+        let delta = merge_chunk(&acc, "le monde", "le monde", 0, " ");
         assert_eq!(delta.corrected, " le monde");
         assert_eq!(*acc.lock().unwrap(), "bonjour le monde");
     }
@@ -670,7 +767,7 @@ mod tests {
     #[test]
     fn merge_first_chunk_has_no_leading_space() {
         let acc = Arc::new(Mutex::new(String::new()));
-        let delta = merge_chunk(&acc, "bonjour", "bonjour", 0);
+        let delta = merge_chunk(&acc, "bonjour", "bonjour", 0, " ");
         assert_eq!(delta.corrected, "bonjour");
         assert_eq!(*acc.lock().unwrap(), "bonjour");
     }
@@ -683,6 +780,7 @@ mod tests {
             "au marché acheter du pain",
             "au marché acheter du pain",
             16000,
+            " ",
         );
         assert_eq!(delta.corrected, " acheter du pain");
         assert_eq!(*acc.lock().unwrap(), "je vais au marché acheter du pain");
@@ -696,6 +794,7 @@ mod tests {
             "au marche acheter du pain",
             "au marché acheter du pain",
             16000,
+            " ",
         );
         assert_eq!(delta.corrected, " acheter du pain");
         assert_eq!(delta.cleaned, "acheter du pain");
@@ -704,7 +803,7 @@ mod tests {
     #[test]
     fn merge_empty_chunk_leaves_accumulator_unchanged() {
         let acc = Arc::new(Mutex::new(String::from("bonjour")));
-        let delta = merge_chunk(&acc, "", "", 0);
+        let delta = merge_chunk(&acc, "", "", 0, " ");
         assert_eq!(delta.corrected, "");
         assert_eq!(*acc.lock().unwrap(), "bonjour");
     }

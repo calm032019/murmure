@@ -210,7 +210,7 @@ export const ModeTabs = ({ modes, activeModeIndex, models, updateSettings }: Mod
                                     <Plus className="w-4 h-4" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-40 bg-background border-border text-foreground">
+                            <DropdownMenuContent className="w-40 bg-popover border-border text-foreground">
                                 {getPresetTypes().map((preset) => (
                                     <DropdownMenuItem
                                         key={preset}

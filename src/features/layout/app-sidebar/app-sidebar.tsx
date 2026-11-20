@@ -139,11 +139,11 @@ export const AppSidebar = () => {
     const isWayland = useIsWayland();
 
     return (
-        <Sidebar className="bg-background border-border border-r overflow-hidden w-[15.5rem]">
-            <SidebarHeader className="flex items-center justify-center bg-background border-b border-border">
+        <Sidebar className="bg-transparent border-sidebar-border border-r overflow-hidden w-[15.5rem]">
+            <SidebarHeader className="flex items-center justify-center bg-transparent border-b border-sidebar-border">
                 <img src={appIcon} alt="logo" className="w-16 h-16" />
             </SidebarHeader>
-            <SidebarContent className="bg-background">
+            <SidebarContent className="bg-transparent">
                 <SidebarGroup>
                     <SidebarMenu>
                         <SidebarMenuItem>
@@ -250,7 +250,7 @@ export const AppSidebar = () => {
                     </div>
                 )}
             </SidebarContent>
-            <SidebarFooter className="bg-background ">
+            <SidebarFooter className="bg-transparent">
                 <a
                     href={
                         version.length > 0

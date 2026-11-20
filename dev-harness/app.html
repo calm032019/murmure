@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Murmure harness</title>
+        <link rel="stylesheet" href="./desktop.css" />
+    </head>
+    <body class="harness-desktop">
+        <div id="root"></div>
+        <script type="module">
+            import { installMockBackend } from './mock-backend.ts';
+            // ?glass=clear|frosted; frosted also simulates the acrylic blur.
+            const glass = new URLSearchParams(location.search).get('glass') ?? 'frosted';
+            if (glass === 'frosted') document.body.classList.add('acrylic');
+            installMockBackend('main', { glass_style: glass });
+            // The app's routes are rooted at "/"; ?route= picks the page.
+            const route = new URLSearchParams(location.search).get('route') ?? '/';
+            history.replaceState(null, '', route);
+            await import('../src/main.tsx');
+
+            // Same synthetic speech as the overlay harness, so the recorder moves.
+            const { emit } = await import('@tauri-apps/api/event');
+            const start = performance.now();
+            setInterval(() => {
+                const t = (performance.now() - start) / 1000;
+                const phrase = Math.max(0, Math.sin(t * 0.9));
+                const syllables = 0.5 + 0.5 * Math.sin(t * 11) * Math.sin(t * 4.3);
+                emit('mic-level', phrase * (0.03 + 0.25 * syllables));
+            }, 33);
+        </script>
+    </body>
+</html>
